@@ -25,11 +25,14 @@ customElements.define('sk-tags', class extends Component {
 
     return [
       h('style', styles),
-      h('div', {class: 'wrapper'}, 
-        h('span', ...tagElements),
+      h('div', {
+        class: 'wrapper',
+        onclick: this.focusInput(this)
+      }, 
+        h('span', {class: 'tags'}, ...tagElements),
         h('input', {
-          oninput: this.onInput(),
-          onkeydown: this.onKeydown(),
+          oninput: this.onInput(this),
+          onkeydown: this.onKeydown(this),
           autofocus: true,
           class: 'input'
         })
@@ -37,9 +40,15 @@ customElements.define('sk-tags', class extends Component {
     ];
   }
 
-  onKeydown() {
-    const component = this;
+  focusInput(component) {
+    return function(e) {
+      if (e.target !== this) return;
+      
+      component.shadowRoot.querySelector('.input').focus();
+    };
+  }
 
+  onKeydown(component) {
     return function(e) {
       const value = this.value;
       const isDel = e.keyCode === deleteCode;
@@ -50,9 +59,7 @@ customElements.define('sk-tags', class extends Component {
     }
   }
 
-  onInput() {
-    const component = this;
-
+  onInput(component) {
     return function(e) {
       const lastChar = this.value.substr(-1);
       const value = this.value.trim();
