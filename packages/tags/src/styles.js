@@ -7,11 +7,18 @@ export default `
     border: 1px solid #ccc;
     width: 600px;
     padding: 5px;
-    min-height: 39px;
+    min-height: 50px;
     cursor: text;
   }
   .tags{
     cursor: default;
+  }
+  .tags .deletion::after{
+    margin-left: 4px;
+    padding: 0 4px;
+    content: 'x';
+    background-color: #ccc;
+    cursor: pointer;
   }
   .tag{
     border: 1px solid #45B39E;
@@ -21,8 +28,9 @@ export default `
   }
   .input{
     width: 31px;
-    height: 27px;
+    height: 36px;
     outline: none;
     border-color: transparent;
+    font-size: 16px;
   }
 `;

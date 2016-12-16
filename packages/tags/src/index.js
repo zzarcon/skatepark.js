@@ -15,21 +15,40 @@ customElements.define('sk-tags', class extends Component {
       },
       tags: {
         default: []
+      },
+      deletion: {
+        attribute: true,
+        default: false
+      },
+      //TODO: Implement editable tags
+      editable: {
+        attribute: true,
+        default: true
       }
     };
   }
 
   renderCallback() {
     const tags = this.tags;
-    const tagElements = tags.map(t => h('span', {class: 'tag'}, t));
+    const allowDeletion = this.deletion ? 'deletion' : '';
+    const tagElements = tags.map(t => {
+      const tagContent = allowDeletion ? [t, h('span', {class: 'deletion'})] : [t];
+
+      return h('span', {
+        class: `tag`,
+        onclick: this.onTagClick(this)
+      }, ...tagContent);
+    });
 
     return [
       h('style', styles),
       h('div', {
-        class: 'wrapper',
-        onclick: this.focusInput(this)
-      }, 
-        h('span', {class: 'tags'}, ...tagElements),
+          class: 'wrapper',
+          onclick: this.onWrapperClick(this)
+        },
+        h('span', {
+          class: `tags`
+        }, ...tagElements),
         h('input', {
           oninput: this.onInput(this),
           onkeydown: this.onKeydown(this),
@@ -40,12 +59,28 @@ customElements.define('sk-tags', class extends Component {
     ];
   }
 
-  focusInput(component) {
+  onTagClick(component) {
+    return function(e) {
+      if (e.target.classList.contains('deletion')) {
+        const childs = Array.from(this.parentElement.children);
+        const index = childs.indexOf(this);
+
+        component.removeTag(index);
+        component.focusInput();
+      }
+    };
+  }
+
+  onWrapperClick(component) {
     return function(e) {
       if (e.target !== this) return;
-      
-      component.shadowRoot.querySelector('.input').focus();
+
+      component.focusInput();
     };
+  }
+
+  focusInput() {
+    this.shadowRoot.querySelector('.input').focus();
   }
 
   onKeydown(component) {
@@ -76,10 +111,10 @@ customElements.define('sk-tags', class extends Component {
     this.tags = this.tags.concat(value);
   }
 
-  removeTag() {
+  removeTag(index = -1) {
     const tags = this.tags.slice();
 
-    tags.pop();
+    tags.splice(index, 1);
     this.tags = tags;
   }
 });
