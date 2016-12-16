@@ -28,7 +28,8 @@ customElements.define('sk-tags', class extends Component {
       h('div', {class: 'wrapper'}, 
         h('span', ...tagElements),
         h('input', {
-          onkeyup: this.onKey(),
+          oninput: this.onInput(),
+          onkeydown: this.onKeydown(),
           autofocus: true,
           class: 'input'
         })
@@ -36,19 +37,26 @@ customElements.define('sk-tags', class extends Component {
     ];
   }
 
-  onKey() {
+  onKeydown() {
+    const component = this;
+
+    return function(e) {
+      const value = this.value;
+      const isDel = e.keyCode === deleteCode;
+
+      if (isDel && value.length <= 0) {
+        component.removeTag();
+      }
+    }
+  }
+
+  onInput() {
     const component = this;
 
     return function(e) {
       const lastChar = this.value.substr(-1);
       const value = this.value.trim();
-      const code = e.keyCode;
-      const isDel = code === deleteCode;
       const isDelimiter = lastChar === component.delimiter;
-
-      if (isDel && value.length <= 0) {
-        component.removeTag();
-      }
 
       if (value && isDelimiter) {
         component.addTag(value);
