@@ -6,7 +6,7 @@ import styles from './styles';
 
 const deleteCode = 8;
 
-customElements.define('sk-tags', class extends Component {
+class SKTags extends Component {
   static get props() {
     return {
       delimiter: {
@@ -126,4 +126,8 @@ customElements.define('sk-tags', class extends Component {
     tags.splice(index, 1);
     this.tags = tags;
   }
-});
+}
+
+customElements.define('sk-tags', SKTags);
+
+export default SKTags;

@@ -7,7 +7,6 @@ export default `
     border: 1px solid #ccc;
     width: 600px;
     padding: 5px;
-    min-height: 50px;
     cursor: text;
   }
   .tags{
