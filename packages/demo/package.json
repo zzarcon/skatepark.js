@@ -9,7 +9,9 @@
   "author": "zzarcon",
   "license": "MIT",
   "devDependencies": {
+    "@kadira/react-storybook-addon-info": "git://github.com/zzarcon/react-storybook-addon-info.git#v3.3.1",
     "@kadira/storybook": "^2.34.0",
+    "@kadira/storybook-addon-options": "^1.0.1",
     "react": "^15.4.1",
     "react-dom": "^15.4.1",
     "skateparkjs-tags": "0.1.0"
