@@ -1,0 +1,1 @@
+{"version":3,"file":null,"sources":["../src/index.js"],"sourcesContent":["import 'skatejs-web-components';\n// import { define, vdom } from 'skatejs';\nimport skatejs from 'skatejs';\nskatejs\ndebugger\n// console.log(define, vdom);"],"names":["skatejs"],"mappings":";;;;;;;;AACA;AACA,AACAA,AACA;;;;;"}

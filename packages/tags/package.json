@@ -2,11 +2,11 @@
   "name": "skateparkjs-tags",
   "version": "0.1.0",
   "description": "Tags component for Skatepark.js",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "jsnext:main": "src/index.js",
   "scripts": {
     "serve": "serve",
-    "watch": "watchify -t [ rollupify --config rollup.config.js ] src/index.js -o dist/tags.js -v"
+    "watch": "watchify -t [ rollupify --config rollup.config.js ] src/index.js -o dist/index.js -v"
   },
   "repository": {
     "type": "git",
