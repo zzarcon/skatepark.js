@@ -104,7 +104,16 @@ customElements.define('sk-tags', class extends Component {
         component.addTag(value);
         this.value = '';
       }
+
+      component.adjustInputSize(this.value.length);
     };
+  }
+
+  adjustInputSize(textLength) {
+    const input = this.shadowRoot.querySelector('.input');
+    const width = (textLength * 9) + 5;
+
+    input.style.width = `${width}px`;
   }
 
   addTag(value) {
