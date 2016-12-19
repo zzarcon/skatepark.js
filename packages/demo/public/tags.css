@@ -1,0 +1,7 @@
+.retrieve #tags{
+  display: inline-block;
+}
+.retrieve button{ 
+  height: 30px;
+  margin-left: 10px;
+}

@@ -1,5 +1,6 @@
 export default {
   inline: true,
   header: false,
-  sourceHeadline: 'Source'
+  sourceHeadline: 'Source',
+  propTables: false
 };

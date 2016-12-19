@@ -97,7 +97,7 @@ class SKTags extends Component {
   onInput(component) {
     return function(e) {
       const lastChar = this.value.substr(-1);
-      const value = this.value.trim();
+      const value = this.value.slice(0, -1).trim();
       const isDelimiter = lastChar === component.delimiter;
 
       if (value && isDelimiter) {
