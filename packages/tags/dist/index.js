@@ -2437,7 +2437,12 @@ class SKTags extends Component {
         default: ' '
       },
       tags: {
-        default: []
+        attribute: true,
+        default: [],
+        deserialize (value) {
+          console.log('deserialize', value);
+          return value.split(',');
+        }
       },
       deletion: {
         attribute: true,

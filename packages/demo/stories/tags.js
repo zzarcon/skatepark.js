@@ -43,7 +43,6 @@ const onClick = () => {
       `}</Highlight>
     </div>
   }, Object.assign({}, options, {source: false}))
-  .addWithInfo('Style it as you wish', () => ( 
-    <div>
-    </div>
+  .addWithInfo('Set initial tags', () => (
+    <sk-tags tags="1,2,3"></sk-tags>
   ), options);
