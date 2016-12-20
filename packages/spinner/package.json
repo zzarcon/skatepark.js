@@ -1,7 +1,7 @@
 {
-  "name": "skateparkjs-tags",
+  "name": "skateparkjs-spinner",
   "version": "0.1.0",
-  "description": "Tags component for Skatepark.js",
+  "description": "",
   "main": "dist/index.js",
   "jsnext:main": "src/index.js",
   "scripts": {
@@ -14,8 +14,7 @@
   "author": "zzarcon",
   "license": "MIT",
   "dependencies": {
-    "skatejs": "^4.4.0",
-    "skatejs-web-components": "^5.0.1"
+    "skatejs": "^4.4.0"
   },
   "devDependencies": {
     "browserify": "^13.1.1",

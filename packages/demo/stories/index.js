@@ -1,2 +1,2 @@
 import tags from './tags';
-import icon from './icon';
+import spinner from './spinner';
