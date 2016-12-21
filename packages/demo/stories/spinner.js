@@ -2,7 +2,7 @@ import React from 'react';
 import {
   storiesOf
 } from '@kadira/storybook';
-import SKTags from 'skateparkjs-spinner';
+import SKSpinner from 'skateparkjs-spinner';
 import options from './defaultStoryOptions';
 
 storiesOf('Spinner', module)

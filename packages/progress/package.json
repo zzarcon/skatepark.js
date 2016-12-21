@@ -1,5 +1,5 @@
 {
-  "name": "skateparkjs-spinner",
+  "name": "skateparkjs-progress",
   "version": "0.1.0",
   "description": "",
   "main": "dist/index.js",
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/zzarcon/skatepark.js/tree/master/packages/spinner"
+    "url": "https://github.com/zzarcon/skatepark.js/tree/master/packages/progress"
   },
   "author": "zzarcon",
   "license": "MIT",
