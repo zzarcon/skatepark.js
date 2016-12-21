@@ -3,17 +3,16 @@ import {
   h
 } from 'skatejs';
 import styles from './styles';
+import layout from './layouts';
 
 class SKSpinner extends Component {
   static get props() {
     return {
-      //TODO: Implement
       overlay: {
         attribute: true,
         default: false
       },
-      //TODO: Render proper html based on style
-      style: {
+      type: {
         attribute: true,
         default: 'circle' //rect, bounce
       },
@@ -22,27 +21,21 @@ class SKSpinner extends Component {
         attribute: true,
         default: '30px'
       },
-      //TODO: Implement
       color: {
-        attribute: true
+        attribute: true,
+        default: '#333'
       }
     };
   }
 
   renderCallback() {
+    const mergedStyles = styles + `:host {--color: ${this.color};}`;
+    const overlay = this.overlay ? 'overlay' : '';
+
     return [
       //TODO: pass proper .spinner width and height based on 'size' attribute
-      h('style', styles),
-      h('div', {
-          class: 'spinner'
-        },
-        h('div', {
-          class: `bounce1`
-        }),
-        h('div', {
-          class: 'bounce2'
-        })
-      )
+      h('style', mergedStyles),
+      ...layout(this.type, overlay)
     ];
   }
 }
