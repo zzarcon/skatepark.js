@@ -2207,8 +2207,7 @@ var styles = `
 Common
  */
 :host {
-  height: 30px;
-  width: 100%;
+  width: inherit;
   position: relative;
   display: block;
   contain: content;
@@ -2218,9 +2217,18 @@ Common
   width: inherit;
 }
 .wrapper {
-  background: #f80;
+  background: var(--color);
   overflow: hidden;
   position: relative;
+}
+.wrapper.animated::before{
+  content: '';
+  width: 10000%;
+  height: 100%;
+  position: absolute;
+  background: linear-gradient(-45deg, transparent 33%, white 33%, white 66%, transparent 66%);
+  background-size: 60px 30px;
+  animation: shift 200s linear infinite;
 }
 .progress {
   background: #ddd;
@@ -2229,7 +2237,20 @@ Common
   top: 0;
   transition: transform 0.3s;
 }
+.percentage{
+  position: absolute;
+  font-family: Verdana;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 13px;
+  font-weight: bold;
+}
 
+@keyframes shift {
+  0%   { left: 0%; }
+  100%  { left: -9900%; }
+}
 `;
 
 class SKProgress extends Component {
@@ -2239,14 +2260,6 @@ class SKProgress extends Component {
       type: {
         attribute: true,
         default: 'plain' //radial
-      },
-      min: {
-        attribute: true,
-        default: 0
-      },
-      max: {
-        attribute: true,
-        default: 100
       },
       value: {
         attribute: true,
@@ -2259,24 +2272,66 @@ class SKProgress extends Component {
       animated: {
         attribute: true,
         default: false
+      },
+      width: {
+        attribute: true,
+        default: 'inherit',
+        deserialize(value) {
+          return `${value}px`;
+        }
+      },
+      height: {
+        attribute: true,
+        default: '30px',
+        deserialize(value) {
+          return `${value}px`;
+        }
+      },
+      showPercentage: {
+        attribute: true,
+        default: false
       }
     };
   }
 
-  renderCallback() {
-    const translation = 100;
+  connectedCallback() {
+    super.connectedCallback();
+
+    this.style.width = this.width;
+    this.style.height = this.height;
+    this.widthValue = this.getElementSize('width');
+    this.heightValue = this.getElementSize('height');
+  }
+
+  renderCallback() {    
+    const width = this.widthValue;
+    const height = this.heightValue;
+    const progress = Math.min(width, (this.value * width) / 100);
+    const progressValue = this.showPercentage ? h('span', {class: 'percentage'}, `${Math.min(100, this.value)}%`) : null;
+    const mergedStyles = styles + `:host {--color: ${this.color};}`;
+    const animated = this.animated ? 'animated' : '';
 
     return [
-      h('style', styles),
+      h('style', mergedStyles),
       h('div', {
-        class: 'wrapper'
+        class: `wrapper ${animated}`
       }, h('div', {
         class: 'progress',
         style: {
-          transform: `translateX(${translation}px)`
+          transform: `translateX(${progress}px)`
         }
-      }))
+      }), progressValue)
     ];
+  }
+
+  getElementSize(property) {
+    return isNaN(parseInt(this[property])) ? 
+      this.parentElement.getClientRects()[0][property] : 
+      parseInt(this[property]);
+  }
+
+  increment(increment) {
+    this.value = parseInt(this.value) + increment;
   }
 }
 
