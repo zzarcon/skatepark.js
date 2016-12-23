@@ -1634,7 +1634,7 @@ function getPropsMap (Ctor) {
   return Ctor[ctorPropsMap];
 }
 
-function get$1 (elem) {
+function get (elem) {
   const props$$1 = {};
 
   getPropNamesAndSymbols(getPropsMap(elem.constructor)).forEach((nameOrSymbol) => {
@@ -1644,7 +1644,7 @@ function get$1 (elem) {
   return props$$1;
 }
 
-function set$1 (elem, newProps) {
+function set (elem, newProps) {
   assign(elem, newProps);
   if (elem[renderer]) {
     elem[renderer]();
@@ -1652,7 +1652,7 @@ function set$1 (elem, newProps) {
 }
 
 var props$1 = function (elem, newProps) {
-  return isUndefined(newProps) ? get$1(elem) : set$1(elem, newProps);
+  return isUndefined(newProps) ? get(elem) : set(elem, newProps);
 };
 
 function getDefaultValue (elem, propDef) {
@@ -2167,261 +2167,108 @@ const Event = ((TheEvent) => {
 
 const h = builder();
 
-var styles = `
-:host {
-  width: inherit;
-  position: relative;
-  display: flex;
-  font-family: Verdana;
-  align-items: center;
-}
-*{
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-style: normal;
-}
-input{
-  outline: none;
-}
-.text{
-  margin-right: 3px;
-  height: 30px;
-  font-size: 16px;  
-}
-.toggle{
-  padding: 5px;
-  cursor: pointer;
-  transition: transform .3s;
-  transform: scale(0.9);
-}
-.toggle:hover{
-  transform: scale(1.1);
-}
-ul{
-  list-style: none;
-}
-.emojis-wrapper{
-  top: 45px;
-  border-radius: 3px;
-  border: 2px solid #aaa;
-  position: absolute;
-  width: 305px;
-  height: 350px;
-  display: none;
-  background-color: white;
-  user-select: none;
-}
-.emojis-wrapper::before{
-  content: '';
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 0 7px 7px 7px;
-  border-color: transparent transparent #aaa transparent;
-  position: absolute;
-  top: -8px;
-  right: 106px;
-}
-.emojis-wrapper.visible{
-  display: block;
-}
-.emoji-search{
-  width: calc(100% - 20px);
-  margin: 10px;
-}
-.emojis-content{
-  margin: 10px 10px 0 10px;
-  overflow: auto;
-  height: calc(100% - 90px);
-}
-.emoji-category-header{
-  text-transform: capitalize;
-  margin: 5px 0;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 2px;
-}
-.emoji-category-content{
-
-}
-.emoji-category-content i{
-  border: 1px solid transparent;
-  padding: 3px 8px 3px 5px;
-  border-radius: 5px;
-  display: inline-block;
-  cursor: pointer;
-  transition: all .3s;
-}
-.emoji-category-content i:hover{
-  border-color: #ddd;
-  background-color: #eee;
-}
-.emojis{
-  text-align: center;
-}
-.categories{
-  border-top: 1px solid #aaa;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 40px;
-}
-.categories img{
-  margin-right: 10px;
-  cursor: pointer;
-  border-radius: 100%;
-}
-.categories img.active, .categories img:hover{
-  background-color: #399ff5;
-}
-`;
-
-var toggleIcon = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABcAAAAYCAYAAAARfGZ1AAAAAXNSR0IArs4c6QAAAAlwSFlzAAALEwAACxMBAJqcGAAAAVlpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IlhNUCBDb3JlIDUuNC4wIj4KICAgPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICAgICAgPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIKICAgICAgICAgICAgeG1sbnM6dGlmZj0iaHR0cDovL25zLmFkb2JlLmNvbS90aWZmLzEuMC8iPgogICAgICAgICA8dGlmZjpPcmllbnRhdGlvbj4xPC90aWZmOk9yaWVudGF0aW9uPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4KTMInWQAAAtxJREFUSA21VT1oU1EUTl5+SMhSskRCh5KhQxER0cVBCUhRCmYQQn6mQDolCJnUqQhKhSBFcREDmfLzIiJRRClCEKSLg0WkFIdMRcwiTknIr9/3vKe8vNjSaHvhvXPPd879zn3nnnuezXaCw34Qd7FYnHO73dddLldkNBotwW9e+e5pmrbT7/frvV7vVSqV+nUQxxQ5SD1er/cOFmTH4/F7yDqIPno8nh+YuxEoCPw85hG73X4F8kmn01lHkC7mE2OCvFKpLGDBazy7g8HgVjKZbE54W5RSqRRyOBx5wIvD4TBi9d8np6PT6fyAneXj8fhjC8+harVavY0NZbChy+YABrlKxSd87rNZiSUqvvomAqwiRRckRRqNzDFT8a/E5OBacqjzImTTWBWQWebYQP7jpTiyitOmsdxYFeZcCb+u65eQz0XRRRKjTXSRimMTlRUjpqk6fikOIhkdQRvQnwtmkjpthULBb8KMKaqmjntwjYrGCwJgy+rEywGCNdjvW23A1mlLp9M/rTZywXaWuBPPvLogVj8e0r0pEEAikaj9DSdGLgQ/xblRLZBuKsc9SL6HSMHjIu52u9w1W4WRlh3k6Rzm3whwNBoNZ6vVeoSDyUWj0d4fdPJdq9XYZx4GAoFcOBweiBXt4CLqfZu6xtMFEBEjpXKew+IiScw2zhVxEVO/mZg2tBB20bfGnG0Tt2qDvcVc6z6fb7Xdbj+F4+dyubwhu2ElAMth8TZ9SCKDHLAvY7MZYkZvwaW4ixScRgpuiKNIEF8FcRL2JSxkinZBrqNi3omPSHzRC9i+xmKxNWITjQt6CYYH4jyLZGeEf3KqcbGLIfds/hl2t1lI6UtiriWHdETi+/2cimr+dTge+WeB9pFHKg7/WZCcQ/V24zcHdZPVhGer2Wx+pz0UCgVZbqrClgEd7TfHxTJwOH6QRvEVK8DO4DGuNCQvyBcc7hsEqKEIpvoL7Cc/fgMA5X/zgks/JAAAAABJRU5ErkJggg==';
-
-var categoryIcons = {
-  people: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABcAAAAYCAYAAAARfGZ1AAAAAXNSR0IArs4c6QAAAAlwSFlzAAALEwAACxMBAJqcGAAAAVlpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IlhNUCBDb3JlIDUuNC4wIj4KICAgPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICAgICAgPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIKICAgICAgICAgICAgeG1sbnM6dGlmZj0iaHR0cDovL25zLmFkb2JlLmNvbS90aWZmLzEuMC8iPgogICAgICAgICA8dGlmZjpPcmllbnRhdGlvbj4xPC90aWZmOk9yaWVudGF0aW9uPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4KTMInWQAAAtxJREFUSA21VT1oU1EUTl5+SMhSskRCh5KhQxER0cVBCUhRCmYQQn6mQDolCJnUqQhKhSBFcREDmfLzIiJRRClCEKSLg0WkFIdMRcwiTknIr9/3vKe8vNjSaHvhvXPPd879zn3nnnuezXaCw34Qd7FYnHO73dddLldkNBotwW9e+e5pmrbT7/frvV7vVSqV+nUQxxQ5SD1er/cOFmTH4/F7yDqIPno8nh+YuxEoCPw85hG73X4F8kmn01lHkC7mE2OCvFKpLGDBazy7g8HgVjKZbE54W5RSqRRyOBx5wIvD4TBi9d8np6PT6fyAneXj8fhjC8+harVavY0NZbChy+YABrlKxSd87rNZiSUqvvomAqwiRRckRRqNzDFT8a/E5OBacqjzImTTWBWQWebYQP7jpTiyitOmsdxYFeZcCb+u65eQz0XRRRKjTXSRimMTlRUjpqk6fikOIhkdQRvQnwtmkjpthULBb8KMKaqmjntwjYrGCwJgy+rEywGCNdjvW23A1mlLp9M/rTZywXaWuBPPvLogVj8e0r0pEEAikaj9DSdGLgQ/xblRLZBuKsc9SL6HSMHjIu52u9w1W4WRlh3k6Rzm3whwNBoNZ6vVeoSDyUWj0d4fdPJdq9XYZx4GAoFcOBweiBXt4CLqfZu6xtMFEBEjpXKew+IiScw2zhVxEVO/mZg2tBB20bfGnG0Tt2qDvcVc6z6fb7Xdbj+F4+dyubwhu2ElAMth8TZ9SCKDHLAvY7MZYkZvwaW4ixScRgpuiKNIEF8FcRL2JSxkinZBrqNi3omPSHzRC9i+xmKxNWITjQt6CYYH4jyLZGeEf3KqcbGLIfds/hl2t1lI6UtiriWHdETi+/2cimr+dTge+WeB9pFHKg7/WZCcQ/V24zcHdZPVhGer2Wx+pz0UCgVZbqrClgEd7TfHxTJwOH6QRvEVK8DO4DGuNCQvyBcc7hsEqKEIpvoL7Cc/fgMA5X/zgks/JAAAAABJRU5ErkJggg==',
-  animals: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABcAAAAYCAYAAAARfGZ1AAAAAXNSR0IArs4c6QAAAAlwSFlzAAALEwAACxMBAJqcGAAAAVlpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IlhNUCBDb3JlIDUuNC4wIj4KICAgPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICAgICAgPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIKICAgICAgICAgICAgeG1sbnM6dGlmZj0iaHR0cDovL25zLmFkb2JlLmNvbS90aWZmLzEuMC8iPgogICAgICAgICA8dGlmZjpPcmllbnRhdGlvbj4xPC90aWZmOk9yaWVudGF0aW9uPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4KTMInWQAAAtxJREFUSA21VT1oU1EUTl5+SMhSskRCh5KhQxER0cVBCUhRCmYQQn6mQDolCJnUqQhKhSBFcREDmfLzIiJRRClCEKSLg0WkFIdMRcwiTknIr9/3vKe8vNjSaHvhvXPPd879zn3nnnuezXaCw34Qd7FYnHO73dddLldkNBotwW9e+e5pmrbT7/frvV7vVSqV+nUQxxQ5SD1er/cOFmTH4/F7yDqIPno8nh+YuxEoCPw85hG73X4F8kmn01lHkC7mE2OCvFKpLGDBazy7g8HgVjKZbE54W5RSqRRyOBx5wIvD4TBi9d8np6PT6fyAneXj8fhjC8+harVavY0NZbChy+YABrlKxSd87rNZiSUqvvomAqwiRRckRRqNzDFT8a/E5OBacqjzImTTWBWQWebYQP7jpTiyitOmsdxYFeZcCb+u65eQz0XRRRKjTXSRimMTlRUjpqk6fikOIhkdQRvQnwtmkjpthULBb8KMKaqmjntwjYrGCwJgy+rEywGCNdjvW23A1mlLp9M/rTZywXaWuBPPvLogVj8e0r0pEEAikaj9DSdGLgQ/xblRLZBuKsc9SL6HSMHjIu52u9w1W4WRlh3k6Rzm3whwNBoNZ6vVeoSDyUWj0d4fdPJdq9XYZx4GAoFcOBweiBXt4CLqfZu6xtMFEBEjpXKew+IiScw2zhVxEVO/mZg2tBB20bfGnG0Tt2qDvcVc6z6fb7Xdbj+F4+dyubwhu2ElAMth8TZ9SCKDHLAvY7MZYkZvwaW4ixScRgpuiKNIEF8FcRL2JSxkinZBrqNi3omPSHzRC9i+xmKxNWITjQt6CYYH4jyLZGeEf3KqcbGLIfds/hl2t1lI6UtiriWHdETi+/2cimr+dTge+WeB9pFHKg7/WZCcQ/V24zcHdZPVhGer2Wx+pz0UCgVZbqrClgEd7TfHxTJwOH6QRvEVK8DO4DGuNCQvyBcc7hsEqKEIpvoL7Cc/fgMA5X/zgks/JAAAAABJRU5ErkJggg==',
-  food: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABcAAAAYCAYAAAARfGZ1AAAAAXNSR0IArs4c6QAAAAlwSFlzAAALEwAACxMBAJqcGAAAAVlpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IlhNUCBDb3JlIDUuNC4wIj4KICAgPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICAgICAgPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIKICAgICAgICAgICAgeG1sbnM6dGlmZj0iaHR0cDovL25zLmFkb2JlLmNvbS90aWZmLzEuMC8iPgogICAgICAgICA8dGlmZjpPcmllbnRhdGlvbj4xPC90aWZmOk9yaWVudGF0aW9uPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4KTMInWQAAAtxJREFUSA21VT1oU1EUTl5+SMhSskRCh5KhQxER0cVBCUhRCmYQQn6mQDolCJnUqQhKhSBFcREDmfLzIiJRRClCEKSLg0WkFIdMRcwiTknIr9/3vKe8vNjSaHvhvXPPd879zn3nnnuezXaCw34Qd7FYnHO73dddLldkNBotwW9e+e5pmrbT7/frvV7vVSqV+nUQxxQ5SD1er/cOFmTH4/F7yDqIPno8nh+YuxEoCPw85hG73X4F8kmn01lHkC7mE2OCvFKpLGDBazy7g8HgVjKZbE54W5RSqRRyOBx5wIvD4TBi9d8np6PT6fyAneXj8fhjC8+harVavY0NZbChy+YABrlKxSd87rNZiSUqvvomAqwiRRckRRqNzDFT8a/E5OBacqjzImTTWBWQWebYQP7jpTiyitOmsdxYFeZcCb+u65eQz0XRRRKjTXSRimMTlRUjpqk6fikOIhkdQRvQnwtmkjpthULBb8KMKaqmjntwjYrGCwJgy+rEywGCNdjvW23A1mlLp9M/rTZywXaWuBPPvLogVj8e0r0pEEAikaj9DSdGLgQ/xblRLZBuKsc9SL6HSMHjIu52u9w1W4WRlh3k6Rzm3whwNBoNZ6vVeoSDyUWj0d4fdPJdq9XYZx4GAoFcOBweiBXt4CLqfZu6xtMFEBEjpXKew+IiScw2zhVxEVO/mZg2tBB20bfGnG0Tt2qDvcVc6z6fb7Xdbj+F4+dyubwhu2ElAMth8TZ9SCKDHLAvY7MZYkZvwaW4ixScRgpuiKNIEF8FcRL2JSxkinZBrqNi3omPSHzRC9i+xmKxNWITjQt6CYYH4jyLZGeEf3KqcbGLIfds/hl2t1lI6UtiriWHdETi+/2cimr+dTge+WeB9pFHKg7/WZCcQ/V24zcHdZPVhGer2Wx+pz0UCgVZbqrClgEd7TfHxTJwOH6QRvEVK8DO4DGuNCQvyBcc7hsEqKEIpvoL7Cc/fgMA5X/zgks/JAAAAABJRU5ErkJggg==',
-  sports: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABcAAAAYCAYAAAARfGZ1AAAAAXNSR0IArs4c6QAAAAlwSFlzAAALEwAACxMBAJqcGAAAAVlpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IlhNUCBDb3JlIDUuNC4wIj4KICAgPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICAgICAgPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIKICAgICAgICAgICAgeG1sbnM6dGlmZj0iaHR0cDovL25zLmFkb2JlLmNvbS90aWZmLzEuMC8iPgogICAgICAgICA8dGlmZjpPcmllbnRhdGlvbj4xPC90aWZmOk9yaWVudGF0aW9uPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4KTMInWQAAAtxJREFUSA21VT1oU1EUTl5+SMhSskRCh5KhQxER0cVBCUhRCmYQQn6mQDolCJnUqQhKhSBFcREDmfLzIiJRRClCEKSLg0WkFIdMRcwiTknIr9/3vKe8vNjSaHvhvXPPd879zn3nnnuezXaCw34Qd7FYnHO73dddLldkNBotwW9e+e5pmrbT7/frvV7vVSqV+nUQxxQ5SD1er/cOFmTH4/F7yDqIPno8nh+YuxEoCPw85hG73X4F8kmn01lHkC7mE2OCvFKpLGDBazy7g8HgVjKZbE54W5RSqRRyOBx5wIvD4TBi9d8np6PT6fyAneXj8fhjC8+harVavY0NZbChy+YABrlKxSd87rNZiSUqvvomAqwiRRckRRqNzDFT8a/E5OBacqjzImTTWBWQWebYQP7jpTiyitOmsdxYFeZcCb+u65eQz0XRRRKjTXSRimMTlRUjpqk6fikOIhkdQRvQnwtmkjpthULBb8KMKaqmjntwjYrGCwJgy+rEywGCNdjvW23A1mlLp9M/rTZywXaWuBPPvLogVj8e0r0pEEAikaj9DSdGLgQ/xblRLZBuKsc9SL6HSMHjIu52u9w1W4WRlh3k6Rzm3whwNBoNZ6vVeoSDyUWj0d4fdPJdq9XYZx4GAoFcOBweiBXt4CLqfZu6xtMFEBEjpXKew+IiScw2zhVxEVO/mZg2tBB20bfGnG0Tt2qDvcVc6z6fb7Xdbj+F4+dyubwhu2ElAMth8TZ9SCKDHLAvY7MZYkZvwaW4ixScRgpuiKNIEF8FcRL2JSxkinZBrqNi3omPSHzRC9i+xmKxNWITjQt6CYYH4jyLZGeEf3KqcbGLIfds/hl2t1lI6UtiriWHdETi+/2cimr+dTge+WeB9pFHKg7/WZCcQ/V24zcHdZPVhGer2Wx+pz0UCgVZbqrClgEd7TfHxTJwOH6QRvEVK8DO4DGuNCQvyBcc7hsEqKEIpvoL7Cc/fgMA5X/zgks/JAAAAABJRU5ErkJggg==',
-  travel: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABcAAAAYCAYAAAARfGZ1AAAAAXNSR0IArs4c6QAAAAlwSFlzAAALEwAACxMBAJqcGAAAAVlpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IlhNUCBDb3JlIDUuNC4wIj4KICAgPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICAgICAgPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIKICAgICAgICAgICAgeG1sbnM6dGlmZj0iaHR0cDovL25zLmFkb2JlLmNvbS90aWZmLzEuMC8iPgogICAgICAgICA8dGlmZjpPcmllbnRhdGlvbj4xPC90aWZmOk9yaWVudGF0aW9uPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4KTMInWQAAAtxJREFUSA21VT1oU1EUTl5+SMhSskRCh5KhQxER0cVBCUhRCmYQQn6mQDolCJnUqQhKhSBFcREDmfLzIiJRRClCEKSLg0WkFIdMRcwiTknIr9/3vKe8vNjSaHvhvXPPd879zn3nnnuezXaCw34Qd7FYnHO73dddLldkNBotwW9e+e5pmrbT7/frvV7vVSqV+nUQxxQ5SD1er/cOFmTH4/F7yDqIPno8nh+YuxEoCPw85hG73X4F8kmn01lHkC7mE2OCvFKpLGDBazy7g8HgVjKZbE54W5RSqRRyOBx5wIvD4TBi9d8np6PT6fyAneXj8fhjC8+harVavY0NZbChy+YABrlKxSd87rNZiSUqvvomAqwiRRckRRqNzDFT8a/E5OBacqjzImTTWBWQWebYQP7jpTiyitOmsdxYFeZcCb+u65eQz0XRRRKjTXSRimMTlRUjpqk6fikOIhkdQRvQnwtmkjpthULBb8KMKaqmjntwjYrGCwJgy+rEywGCNdjvW23A1mlLp9M/rTZywXaWuBPPvLogVj8e0r0pEEAikaj9DSdGLgQ/xblRLZBuKsc9SL6HSMHjIu52u9w1W4WRlh3k6Rzm3whwNBoNZ6vVeoSDyUWj0d4fdPJdq9XYZx4GAoFcOBweiBXt4CLqfZu6xtMFEBEjpXKew+IiScw2zhVxEVO/mZg2tBB20bfGnG0Tt2qDvcVc6z6fb7Xdbj+F4+dyubwhu2ElAMth8TZ9SCKDHLAvY7MZYkZvwaW4ixScRgpuiKNIEF8FcRL2JSxkinZBrqNi3omPSHzRC9i+xmKxNWITjQt6CYYH4jyLZGeEf3KqcbGLIfds/hl2t1lI6UtiriWHdETi+/2cimr+dTge+WeB9pFHKg7/WZCcQ/V24zcHdZPVhGer2Wx+pz0UCgVZbqrClgEd7TfHxTJwOH6QRvEVK8DO4DGuNCQvyBcc7hsEqKEIpvoL7Cc/fgMA5X/zgks/JAAAAABJRU5ErkJggg==',
-  objects: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABcAAAAYCAYAAAARfGZ1AAAAAXNSR0IArs4c6QAAAAlwSFlzAAALEwAACxMBAJqcGAAAAVlpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IlhNUCBDb3JlIDUuNC4wIj4KICAgPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICAgICAgPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIKICAgICAgICAgICAgeG1sbnM6dGlmZj0iaHR0cDovL25zLmFkb2JlLmNvbS90aWZmLzEuMC8iPgogICAgICAgICA8dGlmZjpPcmllbnRhdGlvbj4xPC90aWZmOk9yaWVudGF0aW9uPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4KTMInWQAAAtxJREFUSA21VT1oU1EUTl5+SMhSskRCh5KhQxER0cVBCUhRCmYQQn6mQDolCJnUqQhKhSBFcREDmfLzIiJRRClCEKSLg0WkFIdMRcwiTknIr9/3vKe8vNjSaHvhvXPPd879zn3nnnuezXaCw34Qd7FYnHO73dddLldkNBotwW9e+e5pmrbT7/frvV7vVSqV+nUQxxQ5SD1er/cOFmTH4/F7yDqIPno8nh+YuxEoCPw85hG73X4F8kmn01lHkC7mE2OCvFKpLGDBazy7g8HgVjKZbE54W5RSqRRyOBx5wIvD4TBi9d8np6PT6fyAneXj8fhjC8+harVavY0NZbChy+YABrlKxSd87rNZiSUqvvomAqwiRRckRRqNzDFT8a/E5OBacqjzImTTWBWQWebYQP7jpTiyitOmsdxYFeZcCb+u65eQz0XRRRKjTXSRimMTlRUjpqk6fikOIhkdQRvQnwtmkjpthULBb8KMKaqmjntwjYrGCwJgy+rEywGCNdjvW23A1mlLp9M/rTZywXaWuBPPvLogVj8e0r0pEEAikaj9DSdGLgQ/xblRLZBuKsc9SL6HSMHjIu52u9w1W4WRlh3k6Rzm3whwNBoNZ6vVeoSDyUWj0d4fdPJdq9XYZx4GAoFcOBweiBXt4CLqfZu6xtMFEBEjpXKew+IiScw2zhVxEVO/mZg2tBB20bfGnG0Tt2qDvcVc6z6fb7Xdbj+F4+dyubwhu2ElAMth8TZ9SCKDHLAvY7MZYkZvwaW4ixScRgpuiKNIEF8FcRL2JSxkinZBrqNi3omPSHzRC9i+xmKxNWITjQt6CYYH4jyLZGeEf3KqcbGLIfds/hl2t1lI6UtiriWHdETi+/2cimr+dTge+WeB9pFHKg7/WZCcQ/V24zcHdZPVhGer2Wx+pz0UCgVZbqrClgEd7TfHxTJwOH6QRvEVK8DO4DGuNCQvyBcc7hsEqKEIpvoL7Cc/fgMA5X/zgks/JAAAAABJRU5ErkJggg==',
-  symbols: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABcAAAAYCAYAAAARfGZ1AAAAAXNSR0IArs4c6QAAAAlwSFlzAAALEwAACxMBAJqcGAAAAVlpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IlhNUCBDb3JlIDUuNC4wIj4KICAgPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICAgICAgPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIKICAgICAgICAgICAgeG1sbnM6dGlmZj0iaHR0cDovL25zLmFkb2JlLmNvbS90aWZmLzEuMC8iPgogICAgICAgICA8dGlmZjpPcmllbnRhdGlvbj4xPC90aWZmOk9yaWVudGF0aW9uPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4KTMInWQAAAtxJREFUSA21VT1oU1EUTl5+SMhSskRCh5KhQxER0cVBCUhRCmYQQn6mQDolCJnUqQhKhSBFcREDmfLzIiJRRClCEKSLg0WkFIdMRcwiTknIr9/3vKe8vNjSaHvhvXPPd879zn3nnnuezXaCw34Qd7FYnHO73dddLldkNBotwW9e+e5pmrbT7/frvV7vVSqV+nUQxxQ5SD1er/cOFmTH4/F7yDqIPno8nh+YuxEoCPw85hG73X4F8kmn01lHkC7mE2OCvFKpLGDBazy7g8HgVjKZbE54W5RSqRRyOBx5wIvD4TBi9d8np6PT6fyAneXj8fhjC8+harVavY0NZbChy+YABrlKxSd87rNZiSUqvvomAqwiRRckRRqNzDFT8a/E5OBacqjzImTTWBWQWebYQP7jpTiyitOmsdxYFeZcCb+u65eQz0XRRRKjTXSRimMTlRUjpqk6fikOIhkdQRvQnwtmkjpthULBb8KMKaqmjntwjYrGCwJgy+rEywGCNdjvW23A1mlLp9M/rTZywXaWuBPPvLogVj8e0r0pEEAikaj9DSdGLgQ/xblRLZBuKsc9SL6HSMHjIu52u9w1W4WRlh3k6Rzm3whwNBoNZ6vVeoSDyUWj0d4fdPJdq9XYZx4GAoFcOBweiBXt4CLqfZu6xtMFEBEjpXKew+IiScw2zhVxEVO/mZg2tBB20bfGnG0Tt2qDvcVc6z6fb7Xdbj+F4+dyubwhu2ElAMth8TZ9SCKDHLAvY7MZYkZvwaW4ixScRgpuiKNIEF8FcRL2JSxkinZBrqNi3omPSHzRC9i+xmKxNWITjQt6CYYH4jyLZGeEf3KqcbGLIfds/hl2t1lI6UtiriWHdETi+/2cimr+dTge+WeB9pFHKg7/WZCcQ/V24zcHdZPVhGer2Wx+pz0UCgVZbqrClgEd7TfHxTJwOH6QRvEVK8DO4DGuNCQvyBcc7hsEqKEIpvoL7Cc/fgMA5X/zgks/JAAAAABJRU5ErkJggg==',
-  flags: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABcAAAAYCAYAAAARfGZ1AAAAAXNSR0IArs4c6QAAAAlwSFlzAAALEwAACxMBAJqcGAAAAVlpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IlhNUCBDb3JlIDUuNC4wIj4KICAgPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICAgICAgPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIKICAgICAgICAgICAgeG1sbnM6dGlmZj0iaHR0cDovL25zLmFkb2JlLmNvbS90aWZmLzEuMC8iPgogICAgICAgICA8dGlmZjpPcmllbnRhdGlvbj4xPC90aWZmOk9yaWVudGF0aW9uPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4KTMInWQAAAtxJREFUSA21VT1oU1EUTl5+SMhSskRCh5KhQxER0cVBCUhRCmYQQn6mQDolCJnUqQhKhSBFcREDmfLzIiJRRClCEKSLg0WkFIdMRcwiTknIr9/3vKe8vNjSaHvhvXPPd879zn3nnnuezXaCw34Qd7FYnHO73dddLldkNBotwW9e+e5pmrbT7/frvV7vVSqV+nUQxxQ5SD1er/cOFmTH4/F7yDqIPno8nh+YuxEoCPw85hG73X4F8kmn01lHkC7mE2OCvFKpLGDBazy7g8HgVjKZbE54W5RSqRRyOBx5wIvD4TBi9d8np6PT6fyAneXj8fhjC8+harVavY0NZbChy+YABrlKxSd87rNZiSUqvvomAqwiRRckRRqNzDFT8a/E5OBacqjzImTTWBWQWebYQP7jpTiyitOmsdxYFeZcCb+u65eQz0XRRRKjTXSRimMTlRUjpqk6fikOIhkdQRvQnwtmkjpthULBb8KMKaqmjntwjYrGCwJgy+rEywGCNdjvW23A1mlLp9M/rTZywXaWuBPPvLogVj8e0r0pEEAikaj9DSdGLgQ/xblRLZBuKsc9SL6HSMHjIu52u9w1W4WRlh3k6Rzm3whwNBoNZ6vVeoSDyUWj0d4fdPJdq9XYZx4GAoFcOBweiBXt4CLqfZu6xtMFEBEjpXKew+IiScw2zhVxEVO/mZg2tBB20bfGnG0Tt2qDvcVc6z6fb7Xdbj+F4+dyubwhu2ElAMth8TZ9SCKDHLAvY7MZYkZvwaW4ixScRgpuiKNIEF8FcRL2JSxkinZBrqNi3omPSHzRC9i+xmKxNWITjQt6CYYH4jyLZGeEf3KqcbGLIfds/hl2t1lI6UtiriWHdETi+/2cimr+dTge+WeB9pFHKg7/WZCcQ/V24zcHdZPVhGer2Wx+pz0UCgVZbqrClgEd7TfHxTJwOH6QRvEVK8DO4DGuNCQvyBcc7hsEqKEIpvoL7Cc/fgMA5X/zgks/JAAAAABJRU5ErkJggg=='
+const keyCodes = {
+  del: 8,
+  enter: 13,
+  shift: 16
 };
+const px = (value) => `${value}px`;
 
-var emojiData = {
-  people: ['😀', '😃', '😄', '😁', '😆', '😅', '😂', '😊', '😇', '😉', '😌', '😍', '😘', '😗', '😙', '😚', '😋', '😜', '😝', '😛', '😎', '😏', '😒', '😞', '😔', '😟', '😕', '😣', '😖', '😫', '😩', '😤', '😠', '😡', '😶', '😐', '😑', '😯', '😦', '😧', '😮', '😲', '😵', '😳', '😱', '😨', '😰', '😢', '😥', '😭', '😓', '😪', '😴', '😬', '😷', '😈', '👿', '👹', '👺', '💩', '👻', '💀', '👽', '👾', '🎃', '😺', '😸', '😹', '😻', '😼', '😽', '🙀', '😿', '😾', '👐', '🙌', '👏', '🙏', '👍', '👎', '👊', '✊', '👌', '👈', '👉', '👆', '👇', '✋', '🖖', '👋', '💪', '💅', '🖖', '💄', '💋', '👄', '👅', '👂', '👃', '👣', '👀', '👤', '👥', '👶', '👦', '👧', '👨', '👩', '👱‍', '👱', '👴', '👵', '👲', '👳‍', '👳', '👮‍', '👮', '👷‍', '👷', '💂‍', '💂', '👩️', '👨️', '👩‍', '👨‍', '👩‍', '👨‍', '👩‍', '👨‍', '👩‍', '👨‍', '👩‍', '👨‍', '👩‍', '👨‍', '👩‍', '👨‍', '👩‍', '👨‍', '👩‍', '👨‍', '👩‍', '👨‍', '👩‍', '👨‍', '👩‍', '👨‍', '👩‍', '👨‍', '👩‍', '👨‍', '👩‍', '👨‍', '🎅', '👸', '👰', '👼', '🙇‍', '🙇', '💁', '💁‍', '🙅', '🙅‍', '🙆', '🙆‍', '🙋', '🙋‍', '🙎', '🙎‍', '🙍', '🙍‍', '💇', '💇‍', '💆', '💆‍', '💃', '👯', '👯‍', '🚶‍', '🚶', '🏃‍', '🏃', '👫', '👭', '👬', '💑', '👩‍', '👨‍', '💏', '👩‍', '👨‍', '👪', '👚', '👕', '👖', '👔', '👗', '👙', '👘', '👠', '👡', '👢', '👞', '👟', '👒', '🎩', '🎓', '👑', '⛑', '🎒', '👝', '👛', '👜', '💼', '👓', '🕶', '🌂'],
-  animals: ['🐶', '🐱', '🐭', '🐹', '🐰', '🐻', '🐼', '🐨', '🐯', '🐮', '🐷', '🐽', '🐸', '🐵', '🙊', '🙉', '🙊', '🐒', '🐔', '🐧', '🐦', '🐤', '🐣', '🐥', '🐺', '🐗', '🐴', '🐝', '🐛', '🐌', '🐚', '🐞', '🐜', '🐢', '🐍', '🐙', '🐠', '🐟', '🐡', '🐬', '🐳', '🐋', '🐊', '🐆', '🐅', '🐃', '🐂', '🐄', '🐪', '🐫', '🐘', '🐎', '🐖', '🐐', '🐏', '🐑', '🐕', '🐩', '🐈', '🐓', '🐇', '🐁', '🐀', '🐾', '🐉', '🐲', '🌵', '🎄', '🌲', '🌳', '🌴', '🌱', '🌿', '🍀', '🎍', '🎋', '🍃', '🍂', '🍁', '🍄', '🌾', '💐', '🌷', '🌹', '🌻', '🌼', '🌸', '🌺', '🌎', '🌍', '🌏', '🌕', '🌖', '🌗', '🌘', '🌑', '🌒', '🌓', '🌔', '🌚', '🌝', '🌞', '🌛', '🌜', '🌙', '💫', '⭐️', '🌟', '✨', '🔥', '💥', '⛅️', '🌈', '⛄️', '💨', '🌊', '💧', '💦'],
-  food: ['🍏', '🍎', '🍐', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🍈', '🍒', '🍑', '🍍', '🍅', '🍆', '🌽', '🍠', '🌰', '🍯', '🍞', '🍳', '🍤', '🍗', '🍖', '🍕', '🍔', '🍟', '🍝', '🍜', '🍲', '🍥', '🍣', '🍱', '🍛', '🍚', '🍙', '🍘', '🍢', '🍡', '🍧', '🍨', '🍦', '🍰', '🎂', '🍮', '🍭', '🍬', '🍫', '🍩', '🍪', '🍼', '☕️', '🍵', '🍶', '🍺', '🍻', '🍷', '🍸', '🍹', '🍴'],
-  sports: ['⚽️', '🏀', '🏈', '⚾️', '🎾', '🏉', '🎱', '⛳️', '🎣', '🎿', '🏂', '🏄‍', '🏊', '🚣', '🏇', '🚴', '🚵', '🎽', '🏆', '🎫', '🎪', '🎭', '🎨', '🎬', '🎤', '🎧', '🎼', '🎹', '🥁', '🎷', '🎺', '🎸', '🎻', '🎲', '🎯', '🎳', '🎮', '🎰'],
-  travel: ['🚗', '🚕', '🚙', '🚌', '🚎', '🚓', '🚑', '🚒', '🚐', '🚚', '🚛', '🚜', '🚲', '🚨', '🚔', '🚍', '🚘', '🚖', '🚡', '🚠', '🚟', '🚃', '🚋', '🚞', '🚝', '🚄', '🚅', '🚈', '🚂', '🚆', '🚇', '🚊', '🚉', '🚁', '🚀', '💺', '⛵️', '🚤', '🚢', '🚧', '⛽️', '🚏', '🚦', '🚥', '🗿', '🗽', '⛲️', '🗼', '🏰', '🏯', '🎡', '🎢', '🎠', '🗻', '🌋', '⛺️', '🏭', '🏠', '🏡', '🏢', '🏬', '🏣', '🏤', '🏥', '🏦', '🏨', '🏪', '🏫', '🏩', '💒', '⛪️', '🗾', '🎑', '🌅', '🌄', '🌠', '🎇', '🎆', '🌇', '🌆', '🌃', '🌌', '🌉', '🌁'],
-  objects: ['⌚', '📱', '📲', '💻', '💽', '💾', '💿', '📀', '📼', '📷', '📹', '🎥', '📞', '📟', '📠', '📺', '📻', '⏰', '⌛️', '⏳', '📡', '🔋', '🔌', '💡', '🔦', '💸', '💵', '💴', '💶', '💷', '💰', '💳', '💎', '🔧', '🔨', '🔩', '🔫', '💣', '🔪', '🚬', '🔮', '💈', '🔭', '🔬', '💊', '💉', '🚽', '🚰', '🚿', '🛁', '🛀', '🔑', '🚪', '🎁', '🎈', '🎏', '🎀', '🎊', '🎉', '🎎', '🏮', '🎐', '📩', '📨', '📧', '💌', '📥', '📤', '📦', '📪', '📫', '📬', '📭', '📮', '📯', '📜', '📃', '📄', '📑', '📊', '📈', '📉', '📆', '📅', '📇', '📋', '📁', '📂', '📰', '📓', '📔', '📒', '📕', '📗', '📘', '📙', '📚', '📖', '🔖', '🔗', '📎', '📐', '📏', '📌', '📍', '📌', '🎌', '🏁', '️‍🌈', '📝', '🔍', '🔎', '🔏', '🔐', '🔒', '🔓'],
-  symbols: ['💛', '💚', '💙', '💜', '💔', '💕', '💞', '💓', '💗', '💖', '💘', '💝', '💟', '🔯', '⛎', '🆔', '🉑', '📴', '📳', '🈶', '🈚️', '🈸', '🈺', '🈷️', '🆚', '💮', '🉐', '㊙️', '㊗️', '🈴', '🈵', '🈹', '🈲', '🅰️', '🅱️', '🆎', '🆑', '🅾️', '🆘', '❌', '⭕️', '⛔️', '📛', '🚫', '💯', '💢', '♨️', '🚷', '🚯', '🚳', '🚱', '🔞', '📵', '🚭', '❗️', '❕', '❓', '❔', '‼️', '⁉️', '🔅', '🔆', '🚸', '🔱', '🔰', '✅', '🈯️', '💹', '❎', '🌐', '💠', 'Ⓜ️', '🌀', '💤', '🏧', '🚾', '♿️', '🅿️', '🈳', '🈂️', '🛂', '🛃', '🛄', '🛅', '🚹', '🚺', '🚼', '🚻', '🚮', '🎦', '📶', '🈁', '🔣', '🔤', '🔡', '🔠', '🆖', '🆗', '🆙', '🆒', '🆕', '🆓', '🔟', '🔢', '⏩', '⏪', '⏫', '⏬', '🔼', '🔽', '🔀', '🔁', '🔂', '🔄', '🔃', '🎵', '🎶', '➕', '➖', '➗', '💲', '💱', '〰️', '➰', '➿', '🔚', '🔙', '🔛', '🔝', '🔘', '⚪️', '⚫️', '🔴', '🔵', '🔺', '🔻', '🔸', '🔹', '🔶', '🔷', '🔳', '🔲', '⬛️', '⬜️', '🔈', '🔇', '🔉', '🔊', '🔔', '🔕', '📣', '📢', '💬', '💭', '🃏', '🎴', '🀄️', '🕐', '🕑', '🕒', '🕓', '🕔', '🕕', '🕖', '🕗', '🕘', '🕙', '🕚', '🕛', '🕜', '🕝', '🕞', '🕟', '🕠', '🕡', '🕢', '🕣', '🕤', '🕥', '🕦', '🕧'],
-  flags: ['🏁', '🚩', '‍🌈', '🇦🇫', '🇦🇱', '🇩🇿', '🇦🇸', '🇦🇩', '🇦🇴', '🇦🇮', '🇦🇬', '🇦🇷', '🇦🇲', '🇦🇼', '🇦🇺', '🇦🇹', '🇦🇿', '🇧🇸', '🇧🇭', '🇧🇩', '🇧🇧', '🇧🇾', '🇧🇪', '🇧🇿', '🇧🇯', '🇧🇲', '🇧🇹', '🇧🇴', '🇧🇦', '🇧🇼', '🇧🇷', '🇻🇬', '🇧🇳', '🇧🇬', '🇧🇫', '🇧🇮', '🇰🇭', '🇨🇲', '🇨🇦', '🇨🇻', '🇰🇾', '🇨🇫', '🇹🇩', '🇨🇱', '🇨🇳', '🇨🇴', '🇰🇲', '🇨🇬', '🇨🇩', '🇨🇰', '🇨🇷', '🇨🇮', '🇭🇷', '🇨🇺', '🇨🇼', '🇨🇾', '🇨🇿', '🇩🇰', '🇩🇯', '🇩🇲', '🇩🇴', '🇪🇨', '🇪🇬', '🇸🇻', '🇬🇶', '🇪🇷', '🇪🇪', '🇪🇹', '🇫🇰', '🇫🇴', '🇫🇯', '🇫🇮', '🇫🇷', '🇬🇫', '🇵🇫', '🇹🇫', '🇬🇦', '🇬🇲', '🇬🇪', '🇩🇪', '🇬🇭', '🇬🇮', '🇬🇷', '🇬🇱', '🇬🇩', '🇬🇵', '🇬🇺', '🇬🇹', '🇬🇬', '🇬🇳', '🇬🇼', '🇬🇾', '🇭🇹', '🇭🇳', '🇭🇰', '🇭🇺', '🇮🇸', '🇮🇳', '🇮🇩', '🇮🇷', '🇮🇶', '🇮🇪', '🇮🇲', '🇮🇱', '🇮🇹', '🇯🇲', '🇯🇵', '🎌', '🇯🇪', '🇯🇴', '🇰🇿', '🇰🇪', '🇰🇮', '🇽🇰', '🇰🇼', '🇰🇬', '🇱🇦', '🇱🇻', '🇱🇧', '🇱🇸', '🇱🇷', '🇱🇾', '🇱🇮', '🇱🇹', '🇱🇺', '🇲🇴', '🇲🇰', '🇲🇬', '🇲🇼', '🇲🇾', '🇲🇻', '🇲🇱', '🇲🇹', '🇲🇭', '🇲🇶', '🇲🇷', '🇲🇺', '🇾🇹', '🇲🇽', '🇫🇲', '🇲🇩', '🇲🇨', '🇲🇳', '🇲🇪', '🇲🇸', '🇲🇦', '🇲🇿', '🇲🇲', '🇳🇦', '🇳🇷', '🇳🇵', '🇳🇱', '🇳🇨', '🇳🇿', '🇳🇮', '🇳🇪', '🇳🇬', '🇳🇺', '🇳🇫', '🇰🇵', '🇲🇵', '🇳🇴', '🇴🇲', '🇵🇰', '🇵🇼', '🇵🇸', '🇵🇦', '🇵🇬', '🇵🇾', '🇵🇪', '🇵🇭', '🇵🇳', '🇵🇱', '🇵🇹', '🇵🇷', '🇶🇦', '🇷🇪', '🇷🇴', '🇷🇺', '🇷🇼', '🇼🇸', '🇸🇲', '🇸🇦', '🇸🇳', '🇷🇸', '🇸🇨', '🇸🇱', '🇸🇬', '🇸🇽', '🇸🇰', '🇸🇮', '🇸🇧', '🇸🇴', '🇿🇦', '🇰🇷', '🇸🇸', '🇪🇸', '🇱🇰', '🇸🇭', '🇰🇳', '🇱🇨', '🇻🇨', '🇸🇩', '🇸🇷', '🇸🇿', '🇸🇪', '🇨🇭', '🇸🇾', '🇹🇼', '🇹🇯', '🇹🇿', '🇹🇭', '🇹🇱', '🇹🇬', '🇹🇰', '🇹🇴', '🇹🇹', '🇹🇳', '🇹🇷', '🇹🇲', '🇹🇨', '🇹🇻', '🇻🇮', '🇺🇬', '🇺🇦', '🇦🇪', '🇬🇧', '🇺🇸', '🇺🇾', '🇺🇿', '🇻🇺', '🇻🇦', '🇻🇪', '🇻🇳', '🇾🇪', '🇿🇲', '🇿🇼']
-};
-
-class SKEmoji extends Component {
+class SKGrowy extends Component {
   static get props() {
     return {
-      visible: {
+      minHeight: {
         attribute: true,
+        default: 50
+      },
+      resetOnEnter: {
+        attribute: true,
+        default: true,
+        coerce(val) {
+          return typeof val === 'boolean' ? val : (val === 'false' ? false : true);
+        }
+      },
+      shiftPressed: {
         default: false
-      },
-      emojis: {
-        default: emojiData
-      },
-      activeCategory: {
-        default: 'people'
       }
     };
   }
 
   renderCallback() {
-    const visible = this.visible ? 'visible' : '';
-    const categories = Object.keys(this.emojis);
-    const emojiContent = categories.map(category => {
-      const content = this.emojis[category].map(e => {
-        return h('i', e);
-      });
-
-      return h('li', {
-        class: 'emoji-category-content',
-        'data-category': category
-      }, h('div', {
-        class: 'emoji-category-header'
-      }, category), h('div', {
-        class: 'emojis'
-      }, ...content));
-    });
-    const categoriesContent = categories.map(c => {
-      return h('img', {
-        class: this.activeCategory === c ? 'active' : '',
-        src: categoryIcons[c],
-        onclick: this.goToCategory(c)
-      });
-    });
-
     return [
-      h('style', styles),
-      h('input', {
-        class: 'text'
-      }),
-      h('img', {
-        class: 'toggle',
-        src: toggleIcon,
-        onclick: this.toggle.bind(this)
-      }, ':)'),
-      h('div', {
-        class: `emojis-wrapper ${visible}`
-      }, h('input', {
-        type: 'search',
-        oninput: this.onSearch,
-        class: 'emoji-search'
-      }), h('ul', {
-        class: 'emojis-content',
-        onclick: this.onEmojiClick(this)
-      }, emojiContent), h('div', {
-        class: 'categories'
-      }, categoriesContent))
+      h('textarea', {
+        oninput: this.oninput(this.minHeight),
+        onkeyup: this.onkeyup(this),
+        onkeydown: this.onkeydown(this),
+        style: this.getStyles()
+      })
     ];
   }
 
-  renderedCallback() {
-    if (this.intersectionObserver) return;
-
-    this.intersectionObserver = new IntersectionObserver((entries, observer) => {
-      const intersection = entries[0];
-      const target = intersection.target;
-      const category = target.getAttribute('data-category');
-
-      this.activeCategory = category;
-    }, {
-      threshold: [1]
-    });
-
-    Object.keys(this.emojis).forEach((category) => {
-      this.intersectionObserver.observe(
-        this.shadowRoot.querySelector(`[data-category="${category}"]`)
-      );
-    });
-  }
-
-  goToCategory(category) {
-    return function() {
-      const categoryContent = this.shadowRoot.querySelector(`.emoji-category-content[data-category="${category}"]`);
-
-      categoryContent.scrollIntoView();
-
-      setTimeout(() => this.activeCategory = category, 10);
-    }.bind(this)
-  }
-
-  onEmojiClick(component) {
-    return function(e) {
-      const target = e.target;
-      const isIcon = target.tagName === 'I';
-
-      if (!isIcon) return;
-
-      const emoji = target.textContent;
-      const input = component.shadowRoot.querySelector('.text');
-
-      input.value += emoji;
+  getStyles() {
+    return {
+      minHeight: px(this.minHeight),
+      resize: 'none',
+      outline: 'none',
+      padding: 0
     }
   }
-  onSearch() {
 
+  oninput(minHeight) {
+    return function() {
+      //We need first to reset the height and later read the 'scrollHeight' 
+      this.style.height = "";
+      const height = Math.max(this.scrollHeight, minHeight);
+      this.style.height = px(height);
+    };
   }
 
-  toggle() {
-    this.visible = !this.visible;
-    setTimeout(() => this.shadowRoot.querySelector('.emoji-search').focus(), 10);
+  onkeyup(component) {
+    return function(e) {
+      const code = e.keyCode;
+      const hasLength = !!this.value.trim().length;
+
+      if (code === keyCodes.shift) {
+        component.shiftPressed = false;
+        return;
+      }
+
+      if (code !== keyCodes.enter || !hasLength || component.shiftPressed) return;
+
+      component.triggerEvent('onenter');
+      component.resetOnEnter && component.clear();
+    }
+  }
+
+  clear() {
+    const textarea = this.shadowRoot.querySelector('textarea');
+
+    textarea.style.height = px(this.minHeight);
+    textarea.value = '';
+  }
+
+  triggerEvent(eventName, options) {
+    const event = new CustomEvent(eventName, {
+      detail: options
+    });
+
+    this.dispatchEvent(event);
+  }
+
+  onkeydown(component) {
+    return function(e) {
+      const code = e.keyCode;
+
+      if (code !== keyCodes.shift) return;
+
+      component.shiftPressed = true;
+    }
   }
 }
 
-customElements.define('sk-emoji', SKEmoji);
+customElements.define('sk-growy', SKGrowy);
 
-module.exports = SKEmoji;
+module.exports = SKGrowy;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}]},{},[1]);

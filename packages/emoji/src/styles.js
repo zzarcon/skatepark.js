@@ -81,7 +81,7 @@ ul{
   border-radius: 5px;
   display: inline-block;
   cursor: pointer;
-  transition: all .5s;
+  transition: all .3s;
 }
 .emoji-category-content i:hover{
   border-color: #ddd;
