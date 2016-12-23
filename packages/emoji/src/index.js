@@ -122,7 +122,7 @@ class SKEmoji extends Component {
 
   toggle() {
     this.visible = !this.visible;
-    //TODO: Set focus on '.emoji-search'
+    setTimeout(() => this.shadowRoot.querySelector('.emoji-search').focus(), 10);
   }
 }
 
