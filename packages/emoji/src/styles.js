@@ -31,8 +31,8 @@ ul{
   list-style: none;
 }
 .emojis-wrapper{
-  top: 45px;
-  left: 200px;
+  top: 0;
+  left: 245px;
   border-radius: 3px;
   border: 2px solid #aaa;
   position: absolute;
@@ -47,11 +47,11 @@ ul{
   width: 0;
   height: 0;
   border-style: solid;
-  border-width: 0 7px 7px 7px;
-  border-color: transparent transparent #aaa transparent;
+  border-width: 7px 8px 7px 0;
+  border-color: transparent #aaa transparent transparent;
   position: absolute;
-  top: -8px;
-  right: 106px;
+  top: 24px;
+  left: -10px;
 }
 .emojis-wrapper.visible{
   display: block;
@@ -94,14 +94,18 @@ ul{
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 40px;
+  height: 42px;
 }
-.categories img{
-  margin-right: 10px;
+.categories .cat{
   cursor: pointer;
-  border-radius: 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  height: 100%;
+  width: 25px;
+  flex: 1;
+  transition: background-color .5s;
 }
-.categories img.active, .categories img:hover{
-  background-color: #399ff5;
+.categories .cat.active, .categories .cat:hover{
+  background-color: #afd4f3;
 }
 `;

@@ -12,6 +12,11 @@ const keyCodes = {
 const px = (value) => `${value}px`;
 
 class SKGrowy extends Component {
+  constructor() {
+    super();
+    this.shiftPressed = false;
+  }
+
   static get props() {
     return {
       minHeight: {
@@ -24,9 +29,6 @@ class SKGrowy extends Component {
         coerce(val) {
           return typeof val === 'boolean' ? val : (val === 'false' ? false : true);
         }
-      },
-      shiftPressed: {
-        default: false
       },
       textareaStyle: {
         attribute: true,
@@ -54,7 +56,8 @@ class SKGrowy extends Component {
       minHeight: px(this.minHeight),
       resize: 'none',
       outline: 'none',
-      padding: 0
+      padding: 0,
+      'box-sizing': 'border-box'
     }, this.textareaStyle);
   }
 

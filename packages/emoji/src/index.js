@@ -3,8 +3,7 @@ import {
   h
 } from 'skatejs';
 import styles from './styles';
-import toggleIcon from './toggle_icon';
-import categoryIcons from './category_icons';
+import icons from './icons';
 import emojiData from './emoji_data';
 import SKGrowy from 'skateparkjs-growy';
 
@@ -42,9 +41,11 @@ class SKEmoji extends Component {
       }, ...content));
     });
     const categoriesContent = categories.map(c => {
-      return h('img', {
-        class: this.activeCategory === c ? 'active' : '',
-        src: categoryIcons[c],
+      const active = this.activeCategory === c ? 'active' : '';
+
+      return h('div', {
+        style: `background-image: url(${icons[c]})`,
+        class: `cat ${active}`,
         onclick: this.goToCategory(c)
       });
     });
@@ -54,12 +55,12 @@ class SKEmoji extends Component {
       h('sk-growy', {
         class: 'text',
         'reset-on-enter': 'false',
-        'min-height': 40,
-        'textarea-style': JSON.stringify({height: '30px', 'font-size': '16px'})
+        'min-height': 60,
+        'textarea-style': JSON.stringify({height: '30px', 'font-size': '16px', 'padding': '10px'})
       }),
       h('img', {
         class: 'toggle',
-        src: toggleIcon,
+        src: icons.people,
         onclick: this.toggle.bind(this)
       }, ':)'),
       h('div', {
