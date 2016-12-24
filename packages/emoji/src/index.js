@@ -6,6 +6,7 @@ import styles from './styles';
 import toggleIcon from './toggle_icon';
 import categoryIcons from './category_icons';
 import emojiData from './emoji_data';
+import SKGrowy from 'skateparkjs-growy';
 
 class SKEmoji extends Component {
   static get props() {
@@ -50,8 +51,11 @@ class SKEmoji extends Component {
 
     return [
       h('style', styles),
-      h('input', {
-        class: 'text'
+      h('sk-growy', {
+        class: 'text',
+        'reset-on-enter': 'false',
+        'min-height': 40,
+        'textarea-style': JSON.stringify({height: '30px', 'font-size': '16px'})
       }),
       h('img', {
         class: 'toggle',
@@ -111,9 +115,9 @@ class SKEmoji extends Component {
       if (!isIcon) return;
 
       const emoji = target.textContent;
-      const input = component.shadowRoot.querySelector('.text');
+      const growy = component.shadowRoot.querySelector('.text');
 
-      input.value += emoji;
+      growy.addText(emoji);
     }
   }
   onSearch() {

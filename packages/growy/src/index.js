@@ -27,6 +27,13 @@ class SKGrowy extends Component {
       },
       shiftPressed: {
         default: false
+      },
+      textareaStyle: {
+        attribute: true,
+        default: '{}',
+        coerce(val) {
+          return JSON.parse(val);
+        }
       }
     };
   }
@@ -43,12 +50,12 @@ class SKGrowy extends Component {
   }
 
   getStyles() {
-    return {
+    return Object.assign({}, {
       minHeight: px(this.minHeight),
       resize: 'none',
       outline: 'none',
       padding: 0
-    }
+    }, this.textareaStyle);
   }
 
   oninput(minHeight) {
@@ -100,6 +107,14 @@ class SKGrowy extends Component {
 
       component.shiftPressed = true;
     }
+  }
+
+  addText(text) {
+    const textarea = this.shadowRoot.querySelector('textarea');
+
+    textarea.value += text;
+    //TODO: Improve 'oninput' method making it easy to use
+    this.oninput(this.minHeight).call(textarea);
   }
 }
 

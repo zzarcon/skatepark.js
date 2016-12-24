@@ -17,8 +17,6 @@ input{
 }
 .text{
   margin-right: 3px;
-  height: 30px;
-  font-size: 16px;  
 }
 .toggle{
   padding: 5px;
@@ -34,6 +32,7 @@ ul{
 }
 .emojis-wrapper{
   top: 45px;
+  left: 200px;
   border-radius: 3px;
   border: 2px solid #aaa;
   position: absolute;
