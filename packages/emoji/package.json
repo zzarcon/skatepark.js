@@ -15,7 +15,8 @@
   "license": "MIT",
   "dependencies": {
     "skatejs": "^4.4.0",
-    "skateparkjs-growy": "0.1.0"
+    "skateparkjs-growy": "0.1.0",
+    "skateparkjs-spinner": "0.1.0"
   },
   "devDependencies": {
     "browserify": "^13.1.1",

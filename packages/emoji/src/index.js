@@ -5,7 +5,8 @@ import {
 import styles from './styles';
 import icons from './icons';
 import emojiData from './emoji_data';
-import SKGrowy from 'skateparkjs-growy';
+import 'skateparkjs-growy';
+import 'skateparkjs-spinner';
 
 class SKEmoji extends Component {
   static get props() {
@@ -19,26 +20,40 @@ class SKEmoji extends Component {
       },
       activeCategory: {
         default: 'people'
+      },
+      isSearching: {
+        default: false
+      },
+      searchResults: {
+        default: []
+      },
+      showSpinner: {
+        default: false
       }
     };
   }
 
+  createCategory(emojis, categoryName) {
+    const content = emojis.map(e => {
+      return h('i', e);
+    });
+
+    return h('li', {
+      class: 'emoji-category-content',
+      'data-category': categoryName
+    }, h('div', {
+      class: 'emoji-category-header'
+    }, categoryName), h('div', {
+      class: 'emojis'
+    }, ...content));
+  }
+
   renderCallback() {
     const visible = this.visible ? 'visible' : '';
+    const contentVisible = this.isSearching ? '' : 'visible';
     const categories = Object.keys(this.emojis);
     const emojiContent = categories.map(category => {
-      const content = this.emojis[category].map(e => {
-        return h('i', e);
-      });
-
-      return h('li', {
-        class: 'emoji-category-content',
-        'data-category': category
-      }, h('div', {
-        class: 'emoji-category-header'
-      }, category), h('div', {
-        class: 'emojis'
-      }, ...content));
+      return this.createCategory(this.emojis[category], category);
     });
     const categoriesContent = categories.map(c => {
       const active = this.activeCategory === c ? 'active' : '';
@@ -49,6 +64,8 @@ class SKEmoji extends Component {
         onclick: this.goToCategory(c)
       });
     });
+    const searchResults = this.createCategory(this.searchResults, 'Search results');
+    const spinnerClass = this.showSpinner ? 'visible' : '';
 
     return [
       h('style', styles),
@@ -56,29 +73,45 @@ class SKEmoji extends Component {
         class: 'text',
         'reset-on-enter': 'false',
         'min-height': 60,
-        'textarea-style': JSON.stringify({height: '30px', 'font-size': '16px', 'padding': '10px'})
+        'textarea-style': JSON.stringify({
+          height: '30px',
+          'font-size': '16px',
+          'padding': '10px'
+        })
       }),
       h('img', {
         class: 'toggle',
         src: icons.people,
         onclick: this.toggle.bind(this)
-      }, ':)'),
+      }),
       h('div', {
-        class: `emojis-wrapper ${visible}`
-      }, h('input', {
-        type: 'search',
-        oninput: this.onSearch,
-        class: 'emoji-search'
-      }), h('ul', {
-        class: 'emojis-content',
-        onclick: this.onEmojiClick(this)
-      }, emojiContent), h('div', {
-        class: 'categories'
-      }, categoriesContent))
+          class: `emojis-wrapper ${visible}`
+        }, h('div', {
+          class: 'header'
+        }, h('input', {
+          type: 'search',
+          oninput: this.onSearch(this),
+          class: 'emoji-search'
+        }), h('sk-spinner', {
+          class: spinnerClass,
+          type: 'rect',
+          style: 'width: 30px; height: 30px;'
+        })),
+        h('div', {
+          class: `emojis-content`,
+          onclick: this.onEmojiClick(this)
+        }, h('ul', {
+          class: `emoji-data ${contentVisible}`
+        }, ...emojiContent), h('div', {
+          class: 'emoji-search-results'
+        }, searchResults)), h('div', {
+          class: `categories ${contentVisible}`
+        }, categoriesContent))
     ];
   }
 
   renderedCallback() {
+    return;
     if (this.intersectionObserver) return;
 
     this.intersectionObserver = new IntersectionObserver((entries, observer) => {
@@ -121,8 +154,27 @@ class SKEmoji extends Component {
       growy.addText(emoji);
     }
   }
-  onSearch() {
+  onSearch(component) {
+    return function() {
+      const value = this.value.trim();
+      clearTimeout(component.searchingDelay);
+      
+      if (!value) {
+        component.isSearching = false;
+        component.showSpinner = false;
+        return;
+      }
 
+      component.isSearching = true;
+      component.showSpinner = true;
+
+      component.searchingDelay = setTimeout(() => {
+        fetch(`https://emoji.getdango.com/api/emoji?q=${value}`).then(r => r.json()).then(response => {
+          component.showSpinner = false;
+          component.searchResults = response.results.map(e => e.text);
+        });
+      }, 1000);
+    }
   }
 
   toggle() {
