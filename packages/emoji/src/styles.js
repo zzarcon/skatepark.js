@@ -102,7 +102,7 @@ li{
   border-top: 1px solid #aaa;
   justify-content: center;
   align-items: center;
-  height: 42px;
+  height: 41px;
   display: none;
 }
 .categories.visible{

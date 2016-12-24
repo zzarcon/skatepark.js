@@ -2271,7 +2271,7 @@ li{
   border-top: 1px solid #aaa;
   justify-content: center;
   align-items: center;
-  height: 42px;
+  height: 41px;
   display: none;
 }
 .categories.visible{
@@ -7139,7 +7139,7 @@ class SKEmoji extends Component {
     return function() {
       const value = this.value.trim();
       clearTimeout(component.searchingDelay);
-      
+
       if (!value) {
         component.isSearching = false;
         component.showSpinner = false;
@@ -7148,7 +7148,8 @@ class SKEmoji extends Component {
 
       component.isSearching = true;
       component.showSpinner = true;
-
+      component.searchResults = [];
+      
       component.searchingDelay = setTimeout(() => {
         fetch(`https://emoji.getdango.com/api/emoji?q=${value}`).then(r => r.json()).then(response => {
           component.showSpinner = false;
