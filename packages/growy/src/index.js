@@ -3,7 +3,8 @@ import {
   h,
   prop
 } from 'skatejs';
-import {define} from 'skateparkjs-core';
+import stylesContent from './styles';
+import {define, styles} from 'skateparkjs-core';
 
 const keyCodes = {
   del: 8,
@@ -20,6 +21,9 @@ class SKGrowy extends Component {
 
   static get props() {
     return {
+      styles: {
+        attribute: true,
+      },
       minHeight: {
         attribute: true,
         default: 50
@@ -30,37 +34,22 @@ class SKGrowy extends Component {
         coerce(val) {
           return typeof val === 'boolean' ? val : (val === 'false' ? false : true);
         }
-      },
-      textareaStyle: {
-        attribute: true,
-        default: '{}',
-        coerce(val) {
-          return JSON.parse(val);
-        }
       }
     };
   }
 
   renderCallback() {
+    const mergedStyles = stylesContent + this.styles;
+   
     return [
+      h('style', mergedStyles),
       h('textarea', {
         oninput: this.oninput(this.minHeight),
         onkeyup: this.onkeyup(this),
         onkeydown: this.onkeydown(this),
-        style: this.getStyles()
+        style: {minHeight: px(this.minHeight)}
       })
     ];
-  }
-
-  getStyles() {
-    return Object.assign({}, {
-      minHeight: px(this.minHeight),
-      resize: 'none',
-      outline: 'none',
-      padding: 0,
-      overflow: 'hidden',
-      'box-sizing': 'border-box'
-    }, this.textareaStyle);
   }
 
   oninput(minHeight) {

@@ -14,6 +14,7 @@
   "author": "zzarcon",
   "license": "MIT",
   "dependencies": {
+    "deep-assign": "^2.0.0",
     "skatejs": "^4.4.0"
   },
   "devDependencies": {

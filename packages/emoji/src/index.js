@@ -2,10 +2,10 @@ import {
   Component,
   h
 } from 'skatejs';
-import styles from './styles';
+import stylesDefinition from './styles';
 import icons from './icons';
 import emojiData from './emoji_data';
-import {define} from 'skateparkjs-core';
+import {define, styles} from 'skateparkjs-core';
 import 'skateparkjs-growy';
 import 'skateparkjs-spinner';
 
@@ -70,15 +70,17 @@ class SKEmoji extends Component {
     const spinnerClass = this.showSpinner ? 'visible' : '';
 
     return [
-      h('style', styles),
+      h('style', stylesDefinition),
       h('sk-growy', {
         class: 'text',
         'reset-on-enter': 'false',
         'min-height': 60,
-        'textarea-style': JSON.stringify({
-          height: '30px',
-          'font-size': '16px',
-          'padding': '10px'
+        styles: styles({
+          textarea: {
+            height: '30px',
+            'font-size': '16px',
+            'padding': '10px'  
+          }
         })
       }),
       h('img', {
