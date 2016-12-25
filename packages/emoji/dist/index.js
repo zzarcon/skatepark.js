@@ -2284,7 +2284,7 @@ li{
   height: 100%;
   width: 25px;
   flex: 1;
-  transition: background-color .5s;
+  transition: background-color .2s;
   opacity: .8;
 }
 .categories .cat.active, .categories .cat:hover{
@@ -7092,17 +7092,25 @@ class SKEmoji extends Component {
   }
 
   renderedCallback() {
-    return;
     if (this.intersectionObserver) return;
 
     this.intersectionObserver = new IntersectionObserver((entries, observer) => {
       const intersection = entries[0];
       const target = intersection.target;
       const category = target.getAttribute('data-category');
+      const categories = Object.keys(this.emojis);
+      const activeIndex = categories.indexOf(this.activeCategory);
+      const currentIndex = categories.indexOf(category);
 
-      this.activeCategory = category;
+      if (this.activeCategory === category) {
+        if (intersection.intersectionRatio === 0) {          
+          this.activeCategory = categories[currentIndex + 1];
+        }
+      } else if (activeIndex - currentIndex === 1) {
+        this.activeCategory = categories[activeIndex - 1];
+      }
     }, {
-      threshold: [1]
+      threshold: [0, 0.1]
     });
 
     Object.keys(this.emojis).forEach((category) => {
@@ -7149,13 +7157,13 @@ class SKEmoji extends Component {
       component.isSearching = true;
       component.showSpinner = true;
       component.searchResults = [];
-      
+
       component.searchingDelay = setTimeout(() => {
         fetch(`https://emoji.getdango.com/api/emoji?q=${value}`).then(r => r.json()).then(response => {
           component.showSpinner = false;
           component.searchResults = response.results.map(e => e.text);
         });
-      }, 1000);
+      }, 300);
     }
   }
 

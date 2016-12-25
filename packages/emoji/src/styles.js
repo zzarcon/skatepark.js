@@ -115,7 +115,7 @@ li{
   height: 100%;
   width: 25px;
   flex: 1;
-  transition: background-color .5s;
+  transition: background-color .2s;
   opacity: .8;
 }
 .categories .cat.active, .categories .cat:hover{
