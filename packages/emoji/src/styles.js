@@ -72,7 +72,10 @@ li{
   display: block;
 }
 .emoji-search-results{
-
+  display: none;
+}
+.emoji-search-results.visible{
+  display: block;
 }
 .emoji-category-header{
   text-transform: capitalize;

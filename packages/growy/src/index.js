@@ -3,6 +3,7 @@ import {
   h,
   prop
 } from 'skatejs';
+import {define} from 'skateparkjs-core';
 
 const keyCodes = {
   del: 8,
@@ -57,6 +58,7 @@ class SKGrowy extends Component {
       resize: 'none',
       outline: 'none',
       padding: 0,
+      overflow: 'hidden',
       'box-sizing': 'border-box'
     }, this.textareaStyle);
   }
@@ -121,6 +123,6 @@ class SKGrowy extends Component {
   }
 }
 
-customElements.define('sk-growy', SKGrowy);
+define('sk-growy', SKGrowy);
 
 export default SKGrowy;

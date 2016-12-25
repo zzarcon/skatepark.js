@@ -15,7 +15,8 @@
   "license": "MIT",
   "dependencies": {
     "skatejs": "^4.4.0",
-    "skatejs-web-components": "^5.0.1"
+    "skatejs-web-components": "^5.0.1",
+    "skateparkjs-core": "0.1.0"
   },
   "devDependencies": {
     "browserify": "^13.1.1",

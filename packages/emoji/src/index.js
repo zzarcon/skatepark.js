@@ -5,6 +5,7 @@ import {
 import styles from './styles';
 import icons from './icons';
 import emojiData from './emoji_data';
+import {define} from 'skateparkjs-core';
 import 'skateparkjs-growy';
 import 'skateparkjs-spinner';
 
@@ -51,6 +52,7 @@ class SKEmoji extends Component {
   renderCallback() {
     const visible = this.visible ? 'visible' : '';
     const contentVisible = this.isSearching ? '' : 'visible';
+    const isSearching = this.isSearching ? 'visible' : '';
     const categories = Object.keys(this.emojis);
     const emojiContent = categories.map(category => {
       return this.createCategory(this.emojis[category], category);
@@ -95,6 +97,7 @@ class SKEmoji extends Component {
         }), h('sk-spinner', {
           class: spinnerClass,
           type: 'rect',
+          color: '#aaa',
           style: 'width: 30px; height: 30px;'
         })),
         h('div', {
@@ -103,7 +106,7 @@ class SKEmoji extends Component {
         }, h('ul', {
           class: `emoji-data ${contentVisible}`
         }, ...emojiContent), h('div', {
-          class: 'emoji-search-results'
+          class: `emoji-search-results ${isSearching}`
         }, searchResults)), h('div', {
           class: `categories ${contentVisible}`
         }, categoriesContent))
@@ -192,6 +195,6 @@ class SKEmoji extends Component {
   }
 }
 
-customElements.define('sk-emoji', SKEmoji);
+define('sk-emoji', SKEmoji);
 
 export default SKEmoji;

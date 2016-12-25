@@ -8,6 +8,9 @@ const isString = val => typeof val === 'string';
 const isSymbol = val => typeof val === 'symbol';
 const isUndefined = val => typeof val === 'undefined';
 
+/**
+ * Returns array of owned property names and symbols for the given object
+ */
 function getPropNamesAndSymbols (obj = {}) {
   const listOfKeys = Object.getOwnPropertyNames(obj);
   return isFunction(Object.getOwnPropertySymbols)
@@ -15,6 +18,8 @@ function getPropNamesAndSymbols (obj = {}) {
     : listOfKeys;
 }
 
+// We are not using Object.assign if it is defined since it will cause problems when Symbol is polyfilled.
+// Apparently Object.assign (or any polyfill for this method) does not copy non-native Symbols.
 var assign = (obj, ...args) => {
   args.forEach(arg => getPropNamesAndSymbols(arg).forEach(nameOrSymbol => obj[nameOrSymbol] = arg[nameOrSymbol])); // eslint-disable-line no-return-assign
   return obj;
@@ -24,9 +29,10 @@ var empty = function (val) {
   return typeof val === 'undefined' || val === null;
 };
 
+/**
+ * Attributes value can only be null or string;
+ */
 const toNullOrString = val => (empty(val) ? null : String(val));
-
-// defaults empty to 0 and allows NaN
 
 const connected = '____skate_connected';
 const created = '____skate_created';
@@ -75,6 +81,25 @@ const updated = '____skate_updated';
  * limitations under the License.
  */
 
+/**
+ * Copyright 2015 The Incremental DOM Authors. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS-IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * A cached reference to the hasOwnProperty function.
+ */
 var hasOwnProperty = Object.prototype.hasOwnProperty;
 
 /**
@@ -633,14 +658,12 @@ var patchInner = patchFactory(function (node, fn, data) {
 });
 
 /**
- * Patches an Element with the the provided function. Exactly one top level
- * element call should be made corresponding to `node`.
- * @param {!Element} node The Element where the patch should start.
- * @param {!function(T)} fn A function containing elementOpen/elementClose/etc.
- *     calls that describe the DOM. This should have at most one top level
- *     element call.
- * @param {T=} data An argument passed to fn to represent DOM state.
- * @template T
+ * Checks whether or not the current node matches the specified nodeName and
+ * key.
+ *
+ * @param {?string} nodeName The nodeName for this node.
+ * @param {?string=} key An optional key that identifies a node.
+ * @return {boolean} True if the node matches, false otherwise.
  */
 var matches = function (nodeName, key) {
   var data = getData(currentNode);
@@ -825,8 +848,8 @@ var coreText = function () {
 };
 
 /**
- * Gets the current Element being patched.
- * @return {!Element}
+ * Skips the children in a subtree, allowing an Element to be closed without
+ * clearing out the children.
  */
 var skip = function () {
   currentNode = currentParent.lastChild;
@@ -840,9 +863,16 @@ var skip = function () {
 var ATTRIBUTES_OFFSET = 3;
 
 /**
- * Builds an array of arguments for use with elementOpenStart, attr and
- * elementOpenEnd.
- * @const {Array<*>}
+ * @param {string} tag The element's tag.
+ * @param {?string=} key The key used to identify this element. This can be an
+ *     empty string, but performance may be better if a unique value is used
+ *     when iterating over an array of items.
+ * @param {?Array<*>=} statics An array of attribute name/value pairs of the
+ *     static attributes for the Element. These will only be set once when the
+ *     Element is created.
+ * @param {...*} const_args Attribute name/value pairs of the dynamic attributes
+ *     for the Element.
+ * @return {!Element} The corresponding Element.
  */
 var elementOpen$1 = function (tag, key, statics, const_args) {
   var node = coreElementOpen(tag, key, statics);
@@ -894,18 +924,10 @@ var elementOpen$1 = function (tag, key, statics, const_args) {
 };
 
 /**
- * Declares a virtual Element at the current location in the document. This
- * corresponds to an opening tag and a elementClose tag is required. This is
- * like elementOpen, but the attributes are defined using the attr function
- * rather than being passed as arguments. Must be folllowed by 0 or more calls
- * to attr, then a call to elementOpenEnd.
+ * Closes an open virtual Element.
+ *
  * @param {string} tag The element's tag.
- * @param {?string=} key The key used to identify this element. This can be an
- *     empty string, but performance may be better if a unique value is used
- *     when iterating over an array of items.
- * @param {?Array<*>=} statics An array of attribute name/value pairs of the
- *     static attributes for the Element. These will only be set once when the
- *     Element is created.
+ * @return {!Element} The corresponding Element.
  */
 var elementClose = function (tag) {
   var node = coreElementClose();
@@ -914,18 +936,13 @@ var elementClose = function (tag) {
 };
 
 /**
- * Declares a virtual Element at the current location in the document that has
- * no children.
- * @param {string} tag The element's tag.
- * @param {?string=} key The key used to identify this element. This can be an
- *     empty string, but performance may be better if a unique value is used
- *     when iterating over an array of items.
- * @param {?Array<*>=} statics An array of attribute name/value pairs of the
- *     static attributes for the Element. These will only be set once when the
- *     Element is created.
- * @param {...*} const_args Attribute name/value pairs of the dynamic attributes
- *     for the Element.
- * @return {!Element} The corresponding Element.
+ * Declares a virtual Text at this point in the document.
+ *
+ * @param {string|number|boolean} value The value of the Text.
+ * @param {...(function((string|number|boolean)):string)} const_args
+ *     Functions to format the value which are called only when the value has
+ *     changed.
+ * @return {!Text} The corresponding text node.
  */
 var text = function (value, const_args) {
   var node = coreText();
@@ -1262,7 +1279,7 @@ const newElementOpenEnd = wrapIdomFunc(elementOpenEnd$$1);
 const newElementOpen = wrapIdomFunc(elementOpen$$1, stackOpen);
 const newElementClose = wrapIdomFunc(elementClose_1, stackClose);
 
-// Ensure we call our overridden functions instead of the internal ones.
+// Text override ensures their calls can queue if using function helpers.
 const newText = wrapIdomFunc(text_1);
 
 // Convenience function for declaring an Incremental DOM element using
@@ -1319,9 +1336,6 @@ function builder (...tags) {
       element.bind(null, tag, ...args)
   );
 }
-
-// We don't have to do anything special for the text function; it's just a
-// straight export from Incremental DOM.
 
 function createSymbol (description) {
   return typeof Symbol === 'function' ? Symbol(description) : description;
@@ -1394,6 +1408,12 @@ function deprecated (elem, oldUsage, newUsage) {
   }
 }
 
+/**
+ * @internal
+ * Attributes Manager
+ *
+ * Postpones attributes updates until when connected.
+ */
 class AttributesManager {
   constructor (elem) {
     this.elem = elem;
@@ -1511,6 +1531,18 @@ function error (message) {
   throw new Error(message);
 }
 
+/**
+ * @internal
+ * Property Definition
+ *
+ * Internal meta data and strategies for a property.
+ * Created from the options of a PropOptions config object.
+ *
+ * Once created a PropDefinition should be treated as immutable and final.
+ * 'getPropsMap' function memoizes PropDefinitions by Component's Class.
+ *
+ * The 'attribute' option is normalized to 'attrSource' and 'attrTarget' properties.
+ */
 class PropDefinition {
 
   constructor (nameOrSymbol, propOptions) {
@@ -1619,6 +1651,12 @@ function setCtorNativeProperty (Ctor, propName, value) {
   Object.defineProperty(Ctor, propName, { configurable: true, value });
 }
 
+/**
+ * Memoizes a map of PropDefinition for the given component class.
+ * Keys in the map are the properties name which can a string or a symbol.
+ *
+ * The map is created from the result of: static get props
+ */
 function getPropsMap (Ctor) {
   // Must be defined on constructor and not from a superclass
   if (!Ctor.hasOwnProperty(ctorPropsMap)) {
@@ -2241,7 +2279,10 @@ li{
   display: block;
 }
 .emoji-search-results{
-
+  display: none;
+}
+.emoji-search-results.visible{
+  display: block;
 }
 .emoji-category-header{
   text-transform: capitalize;
@@ -2327,12 +2368,24 @@ var emojiData = {
   flags: ['🏁', '🚩', '‍🌈', '🇦🇫', '🇦🇱', '🇩🇿', '🇦🇸', '🇦🇩', '🇦🇴', '🇦🇮', '🇦🇬', '🇦🇷', '🇦🇲', '🇦🇼', '🇦🇺', '🇦🇹', '🇦🇿', '🇧🇸', '🇧🇭', '🇧🇩', '🇧🇧', '🇧🇾', '🇧🇪', '🇧🇿', '🇧🇯', '🇧🇲', '🇧🇹', '🇧🇴', '🇧🇦', '🇧🇼', '🇧🇷', '🇻🇬', '🇧🇳', '🇧🇬', '🇧🇫', '🇧🇮', '🇰🇭', '🇨🇲', '🇨🇦', '🇨🇻', '🇰🇾', '🇨🇫', '🇹🇩', '🇨🇱', '🇨🇳', '🇨🇴', '🇰🇲', '🇨🇬', '🇨🇩', '🇨🇰', '🇨🇷', '🇨🇮', '🇭🇷', '🇨🇺', '🇨🇼', '🇨🇾', '🇨🇿', '🇩🇰', '🇩🇯', '🇩🇲', '🇩🇴', '🇪🇨', '🇪🇬', '🇸🇻', '🇬🇶', '🇪🇷', '🇪🇪', '🇪🇹', '🇫🇰', '🇫🇴', '🇫🇯', '🇫🇮', '🇫🇷', '🇬🇫', '🇵🇫', '🇹🇫', '🇬🇦', '🇬🇲', '🇬🇪', '🇩🇪', '🇬🇭', '🇬🇮', '🇬🇷', '🇬🇱', '🇬🇩', '🇬🇵', '🇬🇺', '🇬🇹', '🇬🇬', '🇬🇳', '🇬🇼', '🇬🇾', '🇭🇹', '🇭🇳', '🇭🇰', '🇭🇺', '🇮🇸', '🇮🇳', '🇮🇩', '🇮🇷', '🇮🇶', '🇮🇪', '🇮🇲', '🇮🇱', '🇮🇹', '🇯🇲', '🇯🇵', '🎌', '🇯🇪', '🇯🇴', '🇰🇿', '🇰🇪', '🇰🇮', '🇽🇰', '🇰🇼', '🇰🇬', '🇱🇦', '🇱🇻', '🇱🇧', '🇱🇸', '🇱🇷', '🇱🇾', '🇱🇮', '🇱🇹', '🇱🇺', '🇲🇴', '🇲🇰', '🇲🇬', '🇲🇼', '🇲🇾', '🇲🇻', '🇲🇱', '🇲🇹', '🇲🇭', '🇲🇶', '🇲🇷', '🇲🇺', '🇾🇹', '🇲🇽', '🇫🇲', '🇲🇩', '🇲🇨', '🇲🇳', '🇲🇪', '🇲🇸', '🇲🇦', '🇲🇿', '🇲🇲', '🇳🇦', '🇳🇷', '🇳🇵', '🇳🇱', '🇳🇨', '🇳🇿', '🇳🇮', '🇳🇪', '🇳🇬', '🇳🇺', '🇳🇫', '🇰🇵', '🇲🇵', '🇳🇴', '🇴🇲', '🇵🇰', '🇵🇼', '🇵🇸', '🇵🇦', '🇵🇬', '🇵🇾', '🇵🇪', '🇵🇭', '🇵🇳', '🇵🇱', '🇵🇹', '🇵🇷', '🇶🇦', '🇷🇪', '🇷🇴', '🇷🇺', '🇷🇼', '🇼🇸', '🇸🇲', '🇸🇦', '🇸🇳', '🇷🇸', '🇸🇨', '🇸🇱', '🇸🇬', '🇸🇽', '🇸🇰', '🇸🇮', '🇸🇧', '🇸🇴', '🇿🇦', '🇰🇷', '🇸🇸', '🇪🇸', '🇱🇰', '🇸🇭', '🇰🇳', '🇱🇨', '🇻🇨', '🇸🇩', '🇸🇷', '🇸🇿', '🇸🇪', '🇨🇭', '🇸🇾', '🇹🇼', '🇹🇯', '🇹🇿', '🇹🇭', '🇹🇱', '🇹🇬', '🇹🇰', '🇹🇴', '🇹🇹', '🇹🇳', '🇹🇷', '🇹🇲', '🇹🇨', '🇹🇻', '🇻🇮', '🇺🇬', '🇺🇦', '🇦🇪', '🇬🇧', '🇺🇸', '🇺🇾', '🇺🇿', '🇻🇺', '🇻🇦', '🇻🇪', '🇻🇳', '🇾🇪', '🇿🇲', '🇿🇼']
 };
 
+var define$1 = (componentName, classDefinition) => {
+  if (customElements.get(componentName)) {
+    console.warn(`${componentName} it's already defined, skiping redefinition`);
+    return;
+  }
+
+  customElements.define(componentName, classDefinition);
+};
+
 const isFunction$1 = val => typeof val === 'function';
 const isObject$1 = val => (typeof val === 'object' && val !== null);
 const isString$1 = val => typeof val === 'string';
 const isSymbol$1 = val => typeof val === 'symbol';
 const isUndefined$1 = val => typeof val === 'undefined';
 
+/**
+ * Returns array of owned property names and symbols for the given object
+ */
 function getPropNamesAndSymbols$1 (obj = {}) {
   const listOfKeys = Object.getOwnPropertyNames(obj);
   return isFunction$1(Object.getOwnPropertySymbols)
@@ -2340,6 +2393,8 @@ function getPropNamesAndSymbols$1 (obj = {}) {
     : listOfKeys;
 }
 
+// We are not using Object.assign if it is defined since it will cause problems when Symbol is polyfilled.
+// Apparently Object.assign (or any polyfill for this method) does not copy non-native Symbols.
 var assign$1 = (obj, ...args) => {
   args.forEach(arg => getPropNamesAndSymbols$1(arg).forEach(nameOrSymbol => obj[nameOrSymbol] = arg[nameOrSymbol])); // eslint-disable-line no-return-assign
   return obj;
@@ -2349,9 +2404,10 @@ var empty$1 = function (val) {
   return typeof val === 'undefined' || val === null;
 };
 
+/**
+ * Attributes value can only be null or string;
+ */
 const toNullOrString$2 = val => (empty$1(val) ? null : String(val));
-
-// defaults empty to 0 and allows NaN
 
 const connected$1 = '____skate_connected';
 const created$1 = '____skate_created';
@@ -2400,6 +2456,25 @@ const updated$1 = '____skate_updated';
  * limitations under the License.
  */
 
+/**
+ * Copyright 2015 The Incremental DOM Authors. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS-IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * A cached reference to the hasOwnProperty function.
+ */
 var hasOwnProperty$1 = Object.prototype.hasOwnProperty;
 
 /**
@@ -2958,14 +3033,12 @@ var patchInner$1 = patchFactory$1(function (node, fn, data) {
 });
 
 /**
- * Patches an Element with the the provided function. Exactly one top level
- * element call should be made corresponding to `node`.
- * @param {!Element} node The Element where the patch should start.
- * @param {!function(T)} fn A function containing elementOpen/elementClose/etc.
- *     calls that describe the DOM. This should have at most one top level
- *     element call.
- * @param {T=} data An argument passed to fn to represent DOM state.
- * @template T
+ * Checks whether or not the current node matches the specified nodeName and
+ * key.
+ *
+ * @param {?string} nodeName The nodeName for this node.
+ * @param {?string=} key An optional key that identifies a node.
+ * @return {boolean} True if the node matches, false otherwise.
  */
 var matches$1 = function (nodeName, key) {
   var data = getData$1(currentNode$1);
@@ -3150,8 +3223,8 @@ var coreText$1 = function () {
 };
 
 /**
- * Gets the current Element being patched.
- * @return {!Element}
+ * Skips the children in a subtree, allowing an Element to be closed without
+ * clearing out the children.
  */
 var skip$1 = function () {
   currentNode$1 = currentParent$1.lastChild;
@@ -3165,9 +3238,16 @@ var skip$1 = function () {
 var ATTRIBUTES_OFFSET$1 = 3;
 
 /**
- * Builds an array of arguments for use with elementOpenStart, attr and
- * elementOpenEnd.
- * @const {Array<*>}
+ * @param {string} tag The element's tag.
+ * @param {?string=} key The key used to identify this element. This can be an
+ *     empty string, but performance may be better if a unique value is used
+ *     when iterating over an array of items.
+ * @param {?Array<*>=} statics An array of attribute name/value pairs of the
+ *     static attributes for the Element. These will only be set once when the
+ *     Element is created.
+ * @param {...*} const_args Attribute name/value pairs of the dynamic attributes
+ *     for the Element.
+ * @return {!Element} The corresponding Element.
  */
 var elementOpen$3 = function (tag, key, statics, const_args) {
   var node = coreElementOpen$1(tag, key, statics);
@@ -3219,18 +3299,10 @@ var elementOpen$3 = function (tag, key, statics, const_args) {
 };
 
 /**
- * Declares a virtual Element at the current location in the document. This
- * corresponds to an opening tag and a elementClose tag is required. This is
- * like elementOpen, but the attributes are defined using the attr function
- * rather than being passed as arguments. Must be folllowed by 0 or more calls
- * to attr, then a call to elementOpenEnd.
+ * Closes an open virtual Element.
+ *
  * @param {string} tag The element's tag.
- * @param {?string=} key The key used to identify this element. This can be an
- *     empty string, but performance may be better if a unique value is used
- *     when iterating over an array of items.
- * @param {?Array<*>=} statics An array of attribute name/value pairs of the
- *     static attributes for the Element. These will only be set once when the
- *     Element is created.
+ * @return {!Element} The corresponding Element.
  */
 var elementClose$1 = function (tag) {
   var node = coreElementClose$1();
@@ -3239,18 +3311,13 @@ var elementClose$1 = function (tag) {
 };
 
 /**
- * Declares a virtual Element at the current location in the document that has
- * no children.
- * @param {string} tag The element's tag.
- * @param {?string=} key The key used to identify this element. This can be an
- *     empty string, but performance may be better if a unique value is used
- *     when iterating over an array of items.
- * @param {?Array<*>=} statics An array of attribute name/value pairs of the
- *     static attributes for the Element. These will only be set once when the
- *     Element is created.
- * @param {...*} const_args Attribute name/value pairs of the dynamic attributes
- *     for the Element.
- * @return {!Element} The corresponding Element.
+ * Declares a virtual Text at this point in the document.
+ *
+ * @param {string|number|boolean} value The value of the Text.
+ * @param {...(function((string|number|boolean)):string)} const_args
+ *     Functions to format the value which are called only when the value has
+ *     changed.
+ * @return {!Text} The corresponding text node.
  */
 var text$1 = function (value, const_args) {
   var node = coreText$1();
@@ -3585,7 +3652,7 @@ const newElementOpenEnd$1 = wrapIdomFunc$1(elementOpenEnd$2);
 const newElementOpen$1 = wrapIdomFunc$1(elementOpen$2, stackOpen$1);
 const newElementClose$1 = wrapIdomFunc$1(elementClose_1$1, stackClose$1);
 
-// Ensure we call our overridden functions instead of the internal ones.
+// Text override ensures their calls can queue if using function helpers.
 const newText$1 = wrapIdomFunc$1(text_1$1);
 
 // Convenience function for declaring an Incremental DOM element using
@@ -3642,9 +3709,6 @@ function builder$1 (...tags) {
       element$1.bind(null, tag, ...args)
   );
 }
-
-// We don't have to do anything special for the text function; it's just a
-// straight export from Incremental DOM.
 
 function createSymbol$1 (description) {
   return typeof Symbol === 'function' ? Symbol(description) : description;
@@ -3717,6 +3781,12 @@ function deprecated$1 (elem, oldUsage, newUsage) {
   }
 }
 
+/**
+ * @internal
+ * Attributes Manager
+ *
+ * Postpones attributes updates until when connected.
+ */
 class AttributesManager$1 {
   constructor (elem) {
     this.elem = elem;
@@ -3834,6 +3904,18 @@ function error$1 (message) {
   throw new Error(message);
 }
 
+/**
+ * @internal
+ * Property Definition
+ *
+ * Internal meta data and strategies for a property.
+ * Created from the options of a PropOptions config object.
+ *
+ * Once created a PropDefinition should be treated as immutable and final.
+ * 'getPropsMap' function memoizes PropDefinitions by Component's Class.
+ *
+ * The 'attribute' option is normalized to 'attrSource' and 'attrTarget' properties.
+ */
 class PropDefinition$1 {
 
   constructor (nameOrSymbol, propOptions) {
@@ -3942,6 +4024,12 @@ function setCtorNativeProperty$1 (Ctor, propName, value) {
   Object.defineProperty(Ctor, propName, { configurable: true, value });
 }
 
+/**
+ * Memoizes a map of PropDefinition for the given component class.
+ * Keys in the map are the properties name which can a string or a symbol.
+ *
+ * The map is created from the result of: static get props
+ */
 function getPropsMap$1 (Ctor) {
   // Must be defined on constructor and not from a superclass
   if (!Ctor.hasOwnProperty(ctorPropsMap$1)) {
@@ -4490,6 +4578,15 @@ const Event$1 = ((TheEvent) => {
 
 const h$1 = builder$1();
 
+var define$3 = (componentName, classDefinition) => {
+  if (customElements.get(componentName)) {
+    console.warn(`${componentName} it's already defined, skiping redefinition`);
+    return;
+  }
+
+  customElements.define(componentName, classDefinition);
+};
+
 const keyCodes = {
   del: 8,
   enter: 13,
@@ -4543,6 +4640,7 @@ class SKGrowy extends Component$1 {
       resize: 'none',
       outline: 'none',
       padding: 0,
+      overflow: 'hidden',
       'box-sizing': 'border-box'
     }, this.textareaStyle);
   }
@@ -4607,7 +4705,7 @@ class SKGrowy extends Component$1 {
   }
 }
 
-customElements.define('sk-growy', SKGrowy);
+define$3('sk-growy', SKGrowy);
 
 const isFunction$2 = val => typeof val === 'function';
 const isObject$2 = val => (typeof val === 'object' && val !== null);
@@ -4615,6 +4713,9 @@ const isString$2 = val => typeof val === 'string';
 const isSymbol$2 = val => typeof val === 'symbol';
 const isUndefined$2 = val => typeof val === 'undefined';
 
+/**
+ * Returns array of owned property names and symbols for the given object
+ */
 function getPropNamesAndSymbols$2 (obj = {}) {
   const listOfKeys = Object.getOwnPropertyNames(obj);
   return isFunction$2(Object.getOwnPropertySymbols)
@@ -4622,6 +4723,8 @@ function getPropNamesAndSymbols$2 (obj = {}) {
     : listOfKeys;
 }
 
+// We are not using Object.assign if it is defined since it will cause problems when Symbol is polyfilled.
+// Apparently Object.assign (or any polyfill for this method) does not copy non-native Symbols.
 var assign$2 = (obj, ...args) => {
   args.forEach(arg => getPropNamesAndSymbols$2(arg).forEach(nameOrSymbol => obj[nameOrSymbol] = arg[nameOrSymbol])); // eslint-disable-line no-return-assign
   return obj;
@@ -4631,9 +4734,10 @@ var empty$2 = function (val) {
   return typeof val === 'undefined' || val === null;
 };
 
+/**
+ * Attributes value can only be null or string;
+ */
 const toNullOrString$4 = val => (empty$2(val) ? null : String(val));
-
-// defaults empty to 0 and allows NaN
 
 const connected$2 = '____skate_connected';
 const created$2 = '____skate_created';
@@ -4682,6 +4786,25 @@ const updated$2 = '____skate_updated';
  * limitations under the License.
  */
 
+/**
+ * Copyright 2015 The Incremental DOM Authors. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS-IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * A cached reference to the hasOwnProperty function.
+ */
 var hasOwnProperty$2 = Object.prototype.hasOwnProperty;
 
 /**
@@ -5240,14 +5363,12 @@ var patchInner$2 = patchFactory$2(function (node, fn, data) {
 });
 
 /**
- * Patches an Element with the the provided function. Exactly one top level
- * element call should be made corresponding to `node`.
- * @param {!Element} node The Element where the patch should start.
- * @param {!function(T)} fn A function containing elementOpen/elementClose/etc.
- *     calls that describe the DOM. This should have at most one top level
- *     element call.
- * @param {T=} data An argument passed to fn to represent DOM state.
- * @template T
+ * Checks whether or not the current node matches the specified nodeName and
+ * key.
+ *
+ * @param {?string} nodeName The nodeName for this node.
+ * @param {?string=} key An optional key that identifies a node.
+ * @return {boolean} True if the node matches, false otherwise.
  */
 var matches$2 = function (nodeName, key) {
   var data = getData$2(currentNode$2);
@@ -5432,8 +5553,8 @@ var coreText$2 = function () {
 };
 
 /**
- * Gets the current Element being patched.
- * @return {!Element}
+ * Skips the children in a subtree, allowing an Element to be closed without
+ * clearing out the children.
  */
 var skip$2 = function () {
   currentNode$2 = currentParent$2.lastChild;
@@ -5447,9 +5568,16 @@ var skip$2 = function () {
 var ATTRIBUTES_OFFSET$2 = 3;
 
 /**
- * Builds an array of arguments for use with elementOpenStart, attr and
- * elementOpenEnd.
- * @const {Array<*>}
+ * @param {string} tag The element's tag.
+ * @param {?string=} key The key used to identify this element. This can be an
+ *     empty string, but performance may be better if a unique value is used
+ *     when iterating over an array of items.
+ * @param {?Array<*>=} statics An array of attribute name/value pairs of the
+ *     static attributes for the Element. These will only be set once when the
+ *     Element is created.
+ * @param {...*} const_args Attribute name/value pairs of the dynamic attributes
+ *     for the Element.
+ * @return {!Element} The corresponding Element.
  */
 var elementOpen$5 = function (tag, key, statics, const_args) {
   var node = coreElementOpen$2(tag, key, statics);
@@ -5501,18 +5629,10 @@ var elementOpen$5 = function (tag, key, statics, const_args) {
 };
 
 /**
- * Declares a virtual Element at the current location in the document. This
- * corresponds to an opening tag and a elementClose tag is required. This is
- * like elementOpen, but the attributes are defined using the attr function
- * rather than being passed as arguments. Must be folllowed by 0 or more calls
- * to attr, then a call to elementOpenEnd.
+ * Closes an open virtual Element.
+ *
  * @param {string} tag The element's tag.
- * @param {?string=} key The key used to identify this element. This can be an
- *     empty string, but performance may be better if a unique value is used
- *     when iterating over an array of items.
- * @param {?Array<*>=} statics An array of attribute name/value pairs of the
- *     static attributes for the Element. These will only be set once when the
- *     Element is created.
+ * @return {!Element} The corresponding Element.
  */
 var elementClose$2 = function (tag) {
   var node = coreElementClose$2();
@@ -5521,18 +5641,13 @@ var elementClose$2 = function (tag) {
 };
 
 /**
- * Declares a virtual Element at the current location in the document that has
- * no children.
- * @param {string} tag The element's tag.
- * @param {?string=} key The key used to identify this element. This can be an
- *     empty string, but performance may be better if a unique value is used
- *     when iterating over an array of items.
- * @param {?Array<*>=} statics An array of attribute name/value pairs of the
- *     static attributes for the Element. These will only be set once when the
- *     Element is created.
- * @param {...*} const_args Attribute name/value pairs of the dynamic attributes
- *     for the Element.
- * @return {!Element} The corresponding Element.
+ * Declares a virtual Text at this point in the document.
+ *
+ * @param {string|number|boolean} value The value of the Text.
+ * @param {...(function((string|number|boolean)):string)} const_args
+ *     Functions to format the value which are called only when the value has
+ *     changed.
+ * @return {!Text} The corresponding text node.
  */
 var text$2 = function (value, const_args) {
   var node = coreText$2();
@@ -5867,7 +5982,7 @@ const newElementOpenEnd$2 = wrapIdomFunc$2(elementOpenEnd$4);
 const newElementOpen$2 = wrapIdomFunc$2(elementOpen$4, stackOpen$2);
 const newElementClose$2 = wrapIdomFunc$2(elementClose_1$2, stackClose$2);
 
-// Ensure we call our overridden functions instead of the internal ones.
+// Text override ensures their calls can queue if using function helpers.
 const newText$2 = wrapIdomFunc$2(text_1$2);
 
 // Convenience function for declaring an Incremental DOM element using
@@ -5924,9 +6039,6 @@ function builder$2 (...tags) {
       element$2.bind(null, tag, ...args)
   );
 }
-
-// We don't have to do anything special for the text function; it's just a
-// straight export from Incremental DOM.
 
 function createSymbol$2 (description) {
   return typeof Symbol === 'function' ? Symbol(description) : description;
@@ -5999,6 +6111,12 @@ function deprecated$2 (elem, oldUsage, newUsage) {
   }
 }
 
+/**
+ * @internal
+ * Attributes Manager
+ *
+ * Postpones attributes updates until when connected.
+ */
 class AttributesManager$2 {
   constructor (elem) {
     this.elem = elem;
@@ -6116,6 +6234,18 @@ function error$2 (message) {
   throw new Error(message);
 }
 
+/**
+ * @internal
+ * Property Definition
+ *
+ * Internal meta data and strategies for a property.
+ * Created from the options of a PropOptions config object.
+ *
+ * Once created a PropDefinition should be treated as immutable and final.
+ * 'getPropsMap' function memoizes PropDefinitions by Component's Class.
+ *
+ * The 'attribute' option is normalized to 'attrSource' and 'attrTarget' properties.
+ */
 class PropDefinition$2 {
 
   constructor (nameOrSymbol, propOptions) {
@@ -6224,6 +6354,12 @@ function setCtorNativeProperty$2 (Ctor, propName, value) {
   Object.defineProperty(Ctor, propName, { configurable: true, value });
 }
 
+/**
+ * Memoizes a map of PropDefinition for the given component class.
+ * Keys in the map are the properties name which can a string or a symbol.
+ *
+ * The map is created from the result of: static get props
+ */
 function getPropsMap$2 (Ctor) {
   // Must be defined on constructor and not from a superclass
   if (!Ctor.hasOwnProperty(ctorPropsMap$2)) {
@@ -6772,6 +6908,15 @@ const Event$2 = ((TheEvent) => {
 
 const h$2 = builder$2();
 
+var define$5 = (componentName, classDefinition) => {
+  if (customElements.get(componentName)) {
+    console.warn(`${componentName} it's already defined, skiping redefinition`);
+    return;
+  }
+
+  customElements.define(componentName, classDefinition);
+};
+
 var styles$1 = `
 /*
 Common
@@ -6987,7 +7132,7 @@ class SKSpinner extends Component$2 {
   }
 }
 
-customElements.define('sk-spinner', SKSpinner);
+define$5('sk-spinner', SKSpinner);
 
 class SKEmoji extends Component {
   static get props() {
@@ -7032,6 +7177,7 @@ class SKEmoji extends Component {
   renderCallback() {
     const visible = this.visible ? 'visible' : '';
     const contentVisible = this.isSearching ? '' : 'visible';
+    const isSearching = this.isSearching ? 'visible' : '';
     const categories = Object.keys(this.emojis);
     const emojiContent = categories.map(category => {
       return this.createCategory(this.emojis[category], category);
@@ -7076,6 +7222,7 @@ class SKEmoji extends Component {
         }), h('sk-spinner', {
           class: spinnerClass,
           type: 'rect',
+          color: '#aaa',
           style: 'width: 30px; height: 30px;'
         })),
         h('div', {
@@ -7084,7 +7231,7 @@ class SKEmoji extends Component {
         }, h('ul', {
           class: `emoji-data ${contentVisible}`
         }, ...emojiContent), h('div', {
-          class: 'emoji-search-results'
+          class: `emoji-search-results ${isSearching}`
         }, searchResults)), h('div', {
           class: `categories ${contentVisible}`
         }, categoriesContent))
@@ -7173,7 +7320,7 @@ class SKEmoji extends Component {
   }
 }
 
-customElements.define('sk-emoji', SKEmoji);
+define$1('sk-emoji', SKEmoji);
 
 module.exports = SKEmoji;
 

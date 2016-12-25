@@ -2,6 +2,7 @@ import {
   Component,
   h
 } from 'skatejs';
+import {define} from 'skateparkjs-core';
 import styles from './styles';
 import layout from './layouts';
 
@@ -40,6 +41,6 @@ class SKSpinner extends Component {
   }
 }
 
-customElements.define('sk-spinner', SKSpinner);
+define('sk-spinner', SKSpinner);
 
 export default SKSpinner;

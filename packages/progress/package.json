@@ -14,7 +14,8 @@
   "author": "zzarcon",
   "license": "MIT",
   "dependencies": {
-    "skatejs": "^4.4.0"
+    "skatejs": "^4.4.0",
+    "skateparkjs-core": "0.1.0"
   },
   "devDependencies": {
     "browserify": "^13.1.1",

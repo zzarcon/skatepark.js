@@ -3,6 +3,7 @@ import {
   h
 } from 'skatejs';
 import styles from './styles';
+import {define} from 'skateparkjs-core';
 
 const deleteCode = 8;
 
@@ -133,6 +134,6 @@ class SKTags extends Component {
   }
 }
 
-customElements.define('sk-tags', SKTags);
+define('sk-tags', SKTags);
 
 export default SKTags;

@@ -2,6 +2,7 @@ import {
   Component,
   h
 } from 'skatejs';
+import {define} from 'skateparkjs-core';
 import styles from './styles';
 
 class SKProgress extends Component {
@@ -86,6 +87,6 @@ class SKProgress extends Component {
   }
 }
 
-customElements.define('sk-progress', SKProgress);
+define('sk-progress', SKProgress);
 
 export default SKProgress;
