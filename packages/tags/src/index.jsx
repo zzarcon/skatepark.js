@@ -18,7 +18,6 @@ class SKTags extends Component {
         attribute: true,
         default: [],
         deserialize (value) {
-          console.log('deserialize', value)
           return value.split(',');
         }
       },
@@ -38,31 +37,18 @@ class SKTags extends Component {
     const tags = this.tags;
     const allowDeletion = this.deletion ? 'deletion' : '';
     const tagElements = tags.map(t => {
-      const tagContent = allowDeletion ? [t, h('span', {class: 'deletion'})] : [t];
+      const tagContent = allowDeletion ? <span class='deletion'>{t}</span> : t;
 
-      return h('span', {
-        class: `tag`,
-        onclick: this.onTagClick(this)
-      }, ...tagContent);
+      return <span class="tag" onclick={this.onTagClick(this)} >{tagContent}</span>;
     });
 
-    return [
-      h('style', styles),
-      h('div', {
-          class: 'wrapper',
-          onclick: this.onWrapperClick(this)
-        },
-        h('span', {
-          class: `tags`
-        }, ...tagElements),
-        h('input', {
-          oninput: this.onInput(this),
-          onkeydown: this.onKeydown(this),
-          autofocus: true,
-          class: 'input'
-        })
-      )
-    ];
+    return <div>
+      <style>{styles}</style>
+      <div class='wrapper' onclick={this.onWrapperClick(this)}>
+        <span class='tags'>{tagElements}</span>
+        <input type="text" oninput={this.onInput(this)} onkeydown={this.onKeydown(this)} autofocus="true" class= 'input'/>
+      </div>
+    </div>
   }
 
   onTagClick(component) {
