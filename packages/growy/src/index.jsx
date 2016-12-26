@@ -40,16 +40,16 @@ class SKGrowy extends Component {
 
   renderCallback() {
     const mergedStyles = stylesContent + this.styles;
-   
-    return [
-      h('style', mergedStyles),
-      h('textarea', {
-        oninput: this.oninput(this.minHeight),
-        onkeyup: this.onkeyup(this),
-        onkeydown: this.onkeydown(this),
-        style: {minHeight: px(this.minHeight)}
-      })
-    ];
+
+    return <div>
+      <style>{mergedStyles}</style>
+      <textarea 
+        oninput={this.oninput(this.minHeight)} 
+        onkeyup={this.onkeyup(this)} 
+        onkeydown={this.onkeydown(this)} 
+        style={{minHeight: px(this.minHeight)}}>
+      </textarea>
+    </div>
   }
 
   oninput(minHeight) {

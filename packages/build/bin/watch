@@ -6,5 +6,5 @@ echo "Running from: $package_path"
 cd node_modules/skateparkjs-build
 
 node_modules/.bin/watchify -t [ rollupify --config rollup.config.js ] \
-  $package_path/src/index.js \
+  $package_path/src/index.jsx \
   -o $package_path/dist/index.js -v

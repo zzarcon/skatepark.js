@@ -1,12 +1,23 @@
 const rollupNodeResolve = require('rollup-plugin-node-resolve');
 const commonjs = require('rollup-plugin-commonjs');
+const babel = require('rollup-plugin-babel');
 
 module.exports = {
-  entry: 'src/index.js',
+  entry: 'src/index.jsx',
   format: 'umd',
   moduleName: 'Emoji',
   plugins: [
-    rollupNodeResolve({ jsnext: true, main: true }),
+    babel({
+      plugins: [
+        ['transform-react-jsx', {
+          pragma: 'h'
+        }]
+      ]
+    }),
+    rollupNodeResolve({
+      jsnext: true,
+      main: true
+    }),
     commonjs()
   ],
   dest: 'dist/index.js'

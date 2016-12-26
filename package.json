@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "description": "",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "bootstrap": "lerna bootstrap"
+  },
   "devDependencies": {
     "lerna": "2.0.0-beta.30"
   },
