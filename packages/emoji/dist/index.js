@@ -1634,7 +1634,7 @@ function getPropsMap (Ctor) {
   return Ctor[ctorPropsMap];
 }
 
-function get$1 (elem) {
+function get (elem) {
   const props$$1 = {};
 
   getPropNamesAndSymbols(getPropsMap(elem.constructor)).forEach((nameOrSymbol) => {
@@ -1644,7 +1644,7 @@ function get$1 (elem) {
   return props$$1;
 }
 
-function set$1 (elem, newProps) {
+function set (elem, newProps) {
   assign(elem, newProps);
   if (elem[renderer]) {
     elem[renderer]();
@@ -1652,7 +1652,7 @@ function set$1 (elem, newProps) {
 }
 
 var props$1 = function (elem, newProps) {
-  return isUndefined(newProps) ? get$1(elem) : set$1(elem, newProps);
+  return isUndefined(newProps) ? get(elem) : set(elem, newProps);
 };
 
 function getDefaultValue (elem, propDef) {
@@ -4054,7 +4054,7 @@ function getPropsMap$1 (Ctor) {
   return Ctor[ctorPropsMap$1];
 }
 
-function get$2 (elem) {
+function get$1 (elem) {
   const props$$1 = {};
 
   getPropNamesAndSymbols$1(getPropsMap$1(elem.constructor)).forEach((nameOrSymbol) => {
@@ -4064,7 +4064,7 @@ function get$2 (elem) {
   return props$$1;
 }
 
-function set$2 (elem, newProps) {
+function set$1 (elem, newProps) {
   assign$3(elem, newProps);
   if (elem[renderer$1]) {
     elem[renderer$1]();
@@ -4072,7 +4072,7 @@ function set$2 (elem, newProps) {
 }
 
 var props$3 = function (elem, newProps) {
-  return isUndefined$1(newProps) ? get$2(elem) : set$2(elem, newProps);
+  return isUndefined$1(newProps) ? get$1(elem) : set$1(elem, newProps);
 };
 
 function getDefaultValue$1 (elem, propDef) {
@@ -6344,7 +6344,7 @@ function getPropsMap$2 (Ctor) {
   return Ctor[ctorPropsMap$2];
 }
 
-function get$3 (elem) {
+function get$2 (elem) {
   const props$$1 = {};
 
   getPropNamesAndSymbols$2(getPropsMap$2(elem.constructor)).forEach((nameOrSymbol) => {
@@ -6354,7 +6354,7 @@ function get$3 (elem) {
   return props$$1;
 }
 
-function set$3 (elem, newProps) {
+function set$2 (elem, newProps) {
   assign$6(elem, newProps);
   if (elem[renderer$2]) {
     elem[renderer$2]();
@@ -6362,7 +6362,7 @@ function set$3 (elem, newProps) {
 }
 
 var props$5 = function (elem, newProps) {
-  return isUndefined$2(newProps) ? get$3(elem) : set$3(elem, newProps);
+  return isUndefined$2(newProps) ? get$2(elem) : set$2(elem, newProps);
 };
 
 function getDefaultValue$2 (elem, propDef) {

@@ -1672,7 +1672,7 @@ function getPropsMap (Ctor) {
   return Ctor[ctorPropsMap];
 }
 
-function get$1 (elem) {
+function get (elem) {
   const props$$1 = {};
 
   getPropNamesAndSymbols(getPropsMap(elem.constructor)).forEach((nameOrSymbol) => {
@@ -1682,7 +1682,7 @@ function get$1 (elem) {
   return props$$1;
 }
 
-function set$1 (elem, newProps) {
+function set (elem, newProps) {
   assign(elem, newProps);
   if (elem[renderer]) {
     elem[renderer]();
@@ -1690,7 +1690,7 @@ function set$1 (elem, newProps) {
 }
 
 var props$1 = function (elem, newProps) {
-  return isUndefined(newProps) ? get$1(elem) : set$1(elem, newProps);
+  return isUndefined(newProps) ? get(elem) : set(elem, newProps);
 };
 
 function getDefaultValue (elem, propDef) {
@@ -2192,17 +2192,6 @@ var Component = class extends HTMLElement$1 {
   }
 };
 
-function uniqueId (prefix) {
-  // http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript/2117523#2117523
-  const rand = 'xxxxxxxx'.replace(/[xy]/g, (c) => {
-    const r = Math.random() * 16 | 0;
-    // eslint-disable-next-line no-mixed-operators
-    const v = c === 'x' ? r : (r & 0x3 | 0x8);
-    return v.toString(16);
-  });
-  return `${prefix || 'x'}-${rand}`;
-}
-
 const Event = ((TheEvent) => {
   if (TheEvent) {
     try {
@@ -2213,30 +2202,6 @@ const Event = ((TheEvent) => {
   }
   return TheEvent;
 })(index.Event);
-
-function createCustomEvent (name, opts = {}) {
-  const { detail } = opts;
-  delete opts.detail;
-
-  let e;
-  if (Event) {
-    e = new Event(name, opts);
-    Object.defineProperty(e, 'detail', { value: detail });
-  } else {
-    e = document.createEvent('CustomEvent');
-    Object.defineProperty(e, 'composed', { value: opts.composed });
-    e.initCustomEvent(name, opts.bubbles, opts.cancelable, detail);
-  }
-  return e;
-}
-
-function getValue (elem) {
-  const type = elem.type;
-  if (type === 'checkbox' || type === 'radio') {
-    return elem.checked ? elem.value || true : false;
-  }
-  return elem.value;
-}
 
 const h = builder();
 
@@ -2249,7 +2214,7 @@ var define$1 = (componentName, classDefinition) => {
   customElements.define(componentName, classDefinition);
 };
 
-var styles = `
+var styles$1 = `
 /*
 Common
  */
@@ -2453,7 +2418,7 @@ class SKSpinner extends Component {
   }
 
   renderCallback() {
-    const mergedStyles = styles + `:host {--color: ${this.color};}`;
+    const mergedStyles = styles$1 + `:host {--color: ${this.color};}`;
     const overlay = this.overlay ? 'overlay' : '';
 
     return [

@@ -1,0 +1,27 @@
+{
+  "name": "skateparkjs-build",
+  "version": "0.1.0",
+  "description": "",
+  "main": "dist/index.js",
+  "jsnext:main": "src/index.js",
+  "scripts": {
+    
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zzarcon/skatepark.js/tree/master/packages/build"
+  },
+  "author": "zzarcon",
+  "license": "MIT",
+  "dependencies": {
+    "browserify": "^13.1.1",
+    "rollup-plugin-babel": "^2.7.1",
+    "rollup-plugin-commonjs": "^6.0.0",
+    "rollup-plugin-node-resolve": "^2.0.0",
+    "rollupify": "^0.3.6",
+    "watchify": "^3.8.0"
+  },
+  "bin": {
+    "sk-watch": "bin/watch"
+  }
+}
