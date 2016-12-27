@@ -4,7 +4,7 @@ import {
   setAddon
 } from '@kadira/storybook';
 import infoAddon from '@kadira/react-storybook-addon-info';
-import SKTags from 'skateparkjs-tags';
+import 'skateparkjs-tags';
 import Highlight from 'react-highlight';
 import options from './defaultStoryOptions';
 
