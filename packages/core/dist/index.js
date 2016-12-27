@@ -3,14 +3,14 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-var define = (componentName, classDefinition) => {
+var define = ((componentName, classDefinition) => {
   if (customElements.get(componentName)) {
-    console.warn(`${componentName} it's already defined, skiping redefinition`);
+    console.warn(`${ componentName } it's already defined, skiping redefinition`);
     return;
   }
 
   customElements.define(componentName, classDefinition);
-};
+});
 
 var index$1 = function (x) {
 	var type = typeof x;
@@ -85,17 +85,17 @@ var index = function deepAssign(target) {
 	return target;
 };
 
-var styles = (...rules) => {
+var styles = ((...rules) => {
   const styles = index(...rules);
-  
+
   return Object.keys(styles).map(selector => {
     const properties = Object.keys(styles[selector]).map(prop => {
-      return `${prop}: ${styles[selector][prop]};`;
+      return `${ prop }: ${ styles[selector][prop] };`;
     }).join('');
 
-    return `${selector}{${properties}}`;
+    return `${ selector }{${ properties }}`;
   }).join('');
-};
+});
 
 exports.define = define;
 exports.styles = styles;

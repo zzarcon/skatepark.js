@@ -3,7 +3,7 @@
 'use strict';
 
 const isFunction = val => typeof val === 'function';
-const isObject = val => (typeof val === 'object' && val !== null);
+const isObject = val => typeof val === 'object' && val !== null;
 const isString = val => typeof val === 'string';
 const isSymbol = val => typeof val === 'symbol';
 const isUndefined = val => typeof val === 'undefined';
@@ -11,19 +11,17 @@ const isUndefined = val => typeof val === 'undefined';
 /**
  * Returns array of owned property names and symbols for the given object
  */
-function getPropNamesAndSymbols (obj = {}) {
+function getPropNamesAndSymbols(obj = {}) {
   const listOfKeys = Object.getOwnPropertyNames(obj);
-  return isFunction(Object.getOwnPropertySymbols)
-    ? listOfKeys.concat(Object.getOwnPropertySymbols(obj))
-    : listOfKeys;
+  return isFunction(Object.getOwnPropertySymbols) ? listOfKeys.concat(Object.getOwnPropertySymbols(obj)) : listOfKeys;
 }
 
 // We are not using Object.assign if it is defined since it will cause problems when Symbol is polyfilled.
 // Apparently Object.assign (or any polyfill for this method) does not copy non-native Symbols.
-var assign = (obj, ...args) => {
+var assign = ((obj, ...args) => {
   args.forEach(arg => getPropNamesAndSymbols(arg).forEach(nameOrSymbol => obj[nameOrSymbol] = arg[nameOrSymbol])); // eslint-disable-line no-return-assign
   return obj;
-};
+});
 
 var empty = function (val) {
   return typeof val === 'undefined' || val === null;
@@ -32,7 +30,7 @@ var empty = function (val) {
 /**
  * Attributes value can only be null or string;
  */
-const toNullOrString = val => (empty(val) ? null : String(val));
+const toNullOrString = val => empty(val) ? null : String(val);
 
 const connected = '____skate_connected';
 const created = '____skate_created';
@@ -100,6 +98,7 @@ const updated = '____skate_updated';
 /**
  * A cached reference to the hasOwnProperty function.
  */
+
 var hasOwnProperty = Object.prototype.hasOwnProperty;
 
 /**
@@ -976,16 +975,16 @@ var symbols_1 = symbols;
 var attributes_1 = attributes;
 var applyProp_1 = applyProp;
 
-function enter (object, props) {
+function enter(object, props) {
   const saved = {};
-  Object.keys(props).forEach((key) => {
+  Object.keys(props).forEach(key => {
     saved[key] = object[key];
     object[key] = props[key];
   });
   return saved;
 }
 
-function exit (object, saved) {
+function exit(object, saved) {
   assign(object, saved);
 }
 
@@ -1004,9 +1003,7 @@ var propContext = function (object, props) {
 
 var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
-var index = (typeof self === 'object' && self.self === self && self) ||
-  (typeof commonjsGlobal === 'object' && commonjsGlobal.global === commonjsGlobal && commonjsGlobal) ||
-  commonjsGlobal;
+var index = typeof self === 'object' && self.self === self && self || typeof commonjsGlobal === 'object' && commonjsGlobal.global === commonjsGlobal && commonjsGlobal || commonjsGlobal;
 
 /* eslint no-plusplus: 0 */
 
@@ -1034,7 +1031,7 @@ let skips = 0;
 const noop = () => {};
 
 // Adds or removes an event listener for an element.
-function applyEvent (elem, ename, newFunc) {
+function applyEvent(elem, ename, newFunc) {
   let events = elem[$currentEventHandlers];
 
   if (!events) {
@@ -1071,12 +1068,12 @@ const attributesContext = propContext(attributes_1, {
   value: applyProp_1,
 
   // Ref handler.
-  ref (elem, name$$1, value) {
+  ref(elem, name$$1, value) {
     elem[ref] = value;
   },
 
   // Skip handler.
-  skip (elem, name$$1, value) {
+  skip(elem, name$$1, value) {
     if (value) {
       elem[$skip] = true;
     } else {
@@ -1085,7 +1082,7 @@ const attributesContext = propContext(attributes_1, {
   },
 
   // Default attribute applicator.
-  [symbols_1.default] (elem, name$$1, value) {
+  [symbols_1.default](elem, name$$1, value) {
     const { props: props$$1, prototype } = customElements$1.get(elem.localName) || {
       props: {},
       prototype: {}
@@ -1136,7 +1133,7 @@ const attributesContext = propContext(attributes_1, {
   }
 });
 
-function resolveTagName (name$$1) {
+function resolveTagName(name$$1) {
   // We return falsy values as some wrapped IDOM functions allow empty values.
   if (!name$$1) {
     return name$$1;
@@ -1152,7 +1149,7 @@ function resolveTagName (name$$1) {
   if (name$$1.prototype instanceof HTMLElement) {
     // eslint-disable-next-line
     const elem = new name$$1();
-    return (name$$1[name] = elem.localName);
+    return name$$1[name] = elem.localName;
   }
 
   // Pass all other values through so IDOM gets what it's expecting.
@@ -1163,18 +1160,18 @@ function resolveTagName (name$$1) {
 // so it's the only function we need to execute in the context of our attributes.
 const elementOpen$$1 = attributesContext(elementOpen_1);
 
-function elementOpenStart$$1 (tag, key = null, statics = null) {
+function elementOpenStart$$1(tag, key = null, statics = null) {
   overrideArgs = [tag, key, statics];
 }
 
-function elementOpenEnd$$1 () {
+function elementOpenEnd$$1() {
   const node = newElementOpen(...overrideArgs); // eslint-disable-line no-use-before-define
   overrideArgs = null;
   return node;
 }
 
-function wrapIdomFunc (func, tnameFuncHandler = noop) {
-  return function wrap (...args) {
+function wrapIdomFunc(func, tnameFuncHandler = noop) {
+  return function wrap(...args) {
     args[0] = resolveTagName(args[0]);
     stackCurrentHelper = null;
     if (typeof args[0] === 'function') {
@@ -1229,14 +1226,14 @@ function wrapIdomFunc (func, tnameFuncHandler = noop) {
 
       // We must call elementOpenStart and elementOpenEnd even if we are
       // skipping because they queue up attributes and then call elementClose.
-      if (!skips || (func === elementOpenStart$$1 || func === elementOpenEnd$$1)) {
+      if (!skips || func === elementOpenStart$$1 || func === elementOpenEnd$$1) {
         return func(...args);
       }
     }
   };
 }
 
-function newAttr (...args) {
+function newAttr(...args) {
   if (stackCurrentHelper) {
     stackCurrentHelper[$stackCurrentHelperProps][args[0]] = args[1];
   } else if (stackChren.length) {
@@ -1247,7 +1244,7 @@ function newAttr (...args) {
   }
 }
 
-function stackOpen (tname, key, statics, ...attrs) {
+function stackOpen(tname, key, statics, ...attrs) {
   const props$$1 = { key, statics };
   for (let a = 0; a < attrs.length; a += 2) {
     props$$1[attrs[a]] = attrs[a + 1];
@@ -1256,7 +1253,7 @@ function stackOpen (tname, key, statics, ...attrs) {
   stackChren.push([]);
 }
 
-function stackClose (tname) {
+function stackClose(tname) {
   const chren = stackChren.pop();
   const props$$1 = tname[$stackCurrentHelperProps];
   delete tname[$stackCurrentHelperProps];
@@ -1284,7 +1281,7 @@ const newText = wrapIdomFunc(text_1);
 
 // Convenience function for declaring an Incremental DOM element using
 // hyperscript-style syntax.
-function element (tname, attrs, ...chren) {
+function element(tname, attrs, ...chren) {
   const atype = typeof attrs;
 
   // If attributes are a function, then they should be treated as children.
@@ -1311,7 +1308,7 @@ function element (tname, attrs, ...chren) {
   // Close before we render the descendant tree.
   newElementOpenEnd(tname);
 
-  chren.forEach((ch) => {
+  chren.forEach(ch => {
     const ctype = typeof ch;
     if (ctype === 'function') {
       ch();
@@ -1327,17 +1324,14 @@ function element (tname, attrs, ...chren) {
 
 // Even further convenience for building a DSL out of JavaScript functions or hooking into standard
 // transpiles for JSX (React.createElement() / h).
-function builder (...tags) {
+function builder(...tags) {
   if (tags.length === 0) {
     return (...args) => element.bind(null, ...args);
   }
-  return tags.map(tag =>
-    (...args) =>
-      element.bind(null, tag, ...args)
-  );
+  return tags.map(tag => (...args) => element.bind(null, tag, ...args));
 }
 
-function createSymbol (description) {
+function createSymbol(description) {
   return typeof Symbol === 'function' ? Symbol(description) : description;
 }
 
@@ -1346,17 +1340,13 @@ var data = function (element, namespace = '') {
   return namespace && (data[namespace] || (data[namespace] = {})) || data; // eslint-disable-line no-mixed-operators
 };
 
-const nativeHints = [
-  'native code',
-  '[object MutationObserverConstructor]' // for mobile safari iOS 9.0
+const nativeHints = ['native code', '[object MutationObserverConstructor]' // for mobile safari iOS 9.0
 ];
-var native = fn => nativeHints.map(
-  (hint) => (fn || '').toString().indexOf([hint]) > -1
-).reduce((a, b) => a || b);
+var native = (fn => nativeHints.map(hint => (fn || '').toString().indexOf([hint]) > -1).reduce((a, b) => a || b));
 
 const { MutationObserver } = index;
 
-function microtaskDebounce (cbFunc) {
+function microtaskDebounce(cbFunc) {
   let scheduled = false;
   let i = 0;
   let cbArgs = [];
@@ -1373,7 +1363,7 @@ function microtaskDebounce (cbFunc) {
     cbArgs = args;
     if (!scheduled) {
       scheduled = true;
-      elem.textContent = `${i}`;
+      elem.textContent = `${ i }`;
       i += 1;
     }
   };
@@ -1385,7 +1375,7 @@ function microtaskDebounce (cbFunc) {
 //
 // The soonest we can set the timeout for in IE is 1 as they have issues when
 // setting to 0.
-function taskDebounce (cbFunc) {
+function taskDebounce(cbFunc) {
   let scheduled = false;
   let cbArgs = [];
   return (...args) => {
@@ -1401,10 +1391,10 @@ function taskDebounce (cbFunc) {
 }
 var debounce = native(MutationObserver) ? microtaskDebounce : taskDebounce;
 
-function deprecated (elem, oldUsage, newUsage) {
+function deprecated(elem, oldUsage, newUsage) {
   if (DEBUG) {
     const ownerName = elem.localName ? elem.localName : String(elem);
-    console.warn(`${ownerName} ${oldUsage} is deprecated. Use ${newUsage}.`);
+    console.warn(`${ ownerName } ${ oldUsage } is deprecated. Use ${ newUsage }.`);
   }
 }
 
@@ -1415,7 +1405,7 @@ function deprecated (elem, oldUsage, newUsage) {
  * Postpones attributes updates until when connected.
  */
 class AttributesManager {
-  constructor (elem) {
+  constructor(elem) {
     this.elem = elem;
     this.connected = false;
     this.pendingValues = {};
@@ -1425,14 +1415,14 @@ class AttributesManager {
   /**
    * Called from disconnectedCallback
    */
-  suspendAttributesUpdates () {
+  suspendAttributesUpdates() {
     this.connected = false;
   }
 
   /**
    * Called from connectedCallback
    */
-  resumeAttributesUpdates () {
+  resumeAttributesUpdates() {
     this.connected = true;
     const names = Object.keys(this.pendingValues);
     names.forEach(name => {
@@ -1449,7 +1439,7 @@ class AttributesManager {
    * Returns true if the value is different from the one set internally
    * using setAttrValue()
    */
-  onAttributeChanged (name, value) {
+  onAttributeChanged(name, value) {
     value = toNullOrString(value);
 
     // A new attribute value voids the pending one
@@ -1466,7 +1456,7 @@ class AttributesManager {
    * When the component is not connected the value is saved and
    * the attribute is only updated when the component is re-connected.
    */
-  setAttrValue (name, value) {
+  setAttrValue(name, value) {
     value = toNullOrString(value);
 
     this.lastSetValues[name] = value;
@@ -1479,7 +1469,7 @@ class AttributesManager {
     }
   }
 
-  _syncAttrValue (name, value) {
+  _syncAttrValue(name, value) {
     const currAttrValue = toNullOrString(this.elem.getAttribute(name));
     if (value !== currAttrValue) {
       if (value === null) {
@@ -1490,7 +1480,7 @@ class AttributesManager {
     }
   }
 
-  _clearPendingValue (name) {
+  _clearPendingValue(name) {
     if (name in this.pendingValues) {
       delete this.pendingValues[name];
     }
@@ -1504,7 +1494,7 @@ const $attributesMgr = '____skate_attributesMgr';
  * @internal
  * Returns attribute manager instance for the given Component
  */
-function getAttrMgr (elem) {
+function getAttrMgr(elem) {
   let mgr = elem[$attributesMgr];
   if (!mgr) {
     mgr = new AttributesManager(elem);
@@ -1523,11 +1513,11 @@ var getOwnPropertyDescriptors = function (obj = {}) {
 var dashCase = function (str) {
   return str.split(/([A-Z])/).reduce((one, two, idx) => {
     const dash = !one || idx % 2 === 0 ? '' : '-';
-    return `${one}${dash}${two.toLowerCase()}`;
+    return `${ one }${ dash }${ two.toLowerCase() }`;
   });
 };
 
-function error (message) {
+function error(message) {
   throw new Error(message);
 }
 
@@ -1545,7 +1535,7 @@ function error (message) {
  */
 class PropDefinition {
 
-  constructor (nameOrSymbol, propOptions) {
+  constructor(nameOrSymbol, propOptions) {
     this._nameOrSymbol = nameOrSymbol;
 
     propOptions = propOptions || {};
@@ -1576,7 +1566,7 @@ class PropDefinition {
     // Its presence is tested using: ('initial' in propDef)
 
     // 'serialize' default: return string value or null
-    this.serialize = value => (empty(value) ? null : String(value));
+    this.serialize = value => empty(value) ? null : String(value);
 
     // default 'set': no function
     this.set = null;
@@ -1593,7 +1583,7 @@ class PropDefinition {
           } else {
             const { source, target } = optVal;
             if (!source && !target) {
-              error(`${option} 'source' or 'target' is missing.`);
+              error(`${ option } 'source' or 'target' is missing.`);
             }
             this.attrSource = resolveAttrName(source, nameOrSymbol);
             this.attrTarget = resolveAttrName(target, nameOrSymbol);
@@ -1608,7 +1598,7 @@ class PropDefinition {
           if (isFunction(optVal)) {
             this[option] = optVal;
           } else {
-            error(`${option} must be a function.`);
+            error(`${ option } must be a function.`);
           }
           break;
         case 'default':
@@ -1623,15 +1613,15 @@ class PropDefinition {
     });
   }
 
-  get nameOrSymbol () {
+  get nameOrSymbol() {
     return this._nameOrSymbol;
   }
 
 }
 
-function resolveAttrName (attrOption, nameOrSymbol) {
+function resolveAttrName(attrOption, nameOrSymbol) {
   if (isSymbol(nameOrSymbol)) {
-    error(`${nameOrSymbol.toString()} symbol property cannot have an attribute.`);
+    error(`${ nameOrSymbol.toString() } symbol property cannot have an attribute.`);
   } else {
     if (attrOption === true) {
       return dashCase(String(nameOrSymbol));
@@ -1647,7 +1637,7 @@ function resolveAttrName (attrOption, nameOrSymbol) {
  * This is needed to avoid IE11 "stack size errors" when creating
  * a new property on the constructor of an HTMLElement
  */
-function setCtorNativeProperty (Ctor, propName, value) {
+function setCtorNativeProperty(Ctor, propName, value) {
   Object.defineProperty(Ctor, propName, { configurable: true, value });
 }
 
@@ -1657,7 +1647,7 @@ function setCtorNativeProperty (Ctor, propName, value) {
  *
  * The map is created from the result of: static get props
  */
-function getPropsMap (Ctor) {
+function getPropsMap(Ctor) {
   // Must be defined on constructor and not from a superclass
   if (!Ctor.hasOwnProperty(ctorPropsMap)) {
     const props$$1 = Ctor.props || {};
@@ -1672,17 +1662,17 @@ function getPropsMap (Ctor) {
   return Ctor[ctorPropsMap];
 }
 
-function get (elem) {
+function get(elem) {
   const props$$1 = {};
 
-  getPropNamesAndSymbols(getPropsMap(elem.constructor)).forEach((nameOrSymbol) => {
+  getPropNamesAndSymbols(getPropsMap(elem.constructor)).forEach(nameOrSymbol => {
     props$$1[nameOrSymbol] = elem[nameOrSymbol];
   });
 
   return props$$1;
 }
 
-function set (elem, newProps) {
+function set(elem, newProps) {
   assign(elem, newProps);
   if (elem[renderer]) {
     elem[renderer]();
@@ -1693,24 +1683,20 @@ var props$1 = function (elem, newProps) {
   return isUndefined(newProps) ? get(elem) : set(elem, newProps);
 };
 
-function getDefaultValue (elem, propDef) {
-  return typeof propDef.default === 'function'
-    ? propDef.default(elem, { name: propDef.nameOrSymbol })
-    : propDef.default;
+function getDefaultValue(elem, propDef) {
+  return typeof propDef.default === 'function' ? propDef.default(elem, { name: propDef.nameOrSymbol }) : propDef.default;
 }
 
-function getInitialValue (elem, propDef) {
-  return typeof propDef.initial === 'function'
-    ? propDef.initial(elem, { name: propDef.nameOrSymbol })
-    : propDef.initial;
+function getInitialValue(elem, propDef) {
+  return typeof propDef.initial === 'function' ? propDef.initial(elem, { name: propDef.nameOrSymbol }) : propDef.initial;
 }
 
-function getPropData (elem, name) {
+function getPropData(elem, name) {
   const elemData = data(elem, 'props');
   return elemData[name] || (elemData[name] = {});
 }
 
-function createNativePropertyDescriptor (propDef) {
+function createNativePropertyDescriptor(propDef) {
   const { nameOrSymbol } = propDef;
 
   const prop = {
@@ -1748,8 +1734,7 @@ function createNativePropertyDescriptor (propDef) {
     propData.internalValue = initialValue;
 
     // Reflect to Target Attribute
-    const mustReflect = propDef.attrTarget && !empty(initialValue) &&
-      (!valueFromAttrSource || propDef.attrTargetIsNotSource);
+    const mustReflect = propDef.attrTarget && !empty(initialValue) && (!valueFromAttrSource || propDef.attrTargetIsNotSource);
 
     if (mustReflect) {
       let serializedValue = propDef.serialize(initialValue);
@@ -1757,13 +1742,13 @@ function createNativePropertyDescriptor (propDef) {
     }
   };
 
-  prop.get = function get () {
+  prop.get = function get() {
     const propData = getPropData(this, nameOrSymbol);
     const { internalValue } = propData;
     return propDef.get ? propDef.get(this, { name: nameOrSymbol, internalValue }) : internalValue;
   };
 
-  prop.set = function set (newValue) {
+  prop.set = function set(newValue) {
     const propData = getPropData(this, nameOrSymbol);
 
     const useDefaultValue = empty(newValue);
@@ -1790,8 +1775,7 @@ function createNativePropertyDescriptor (propDef) {
     propData.internalValue = propData.oldValue = newValue;
 
     // Reflect to Target attribute.
-    const mustReflect = propDef.attrTarget &&
-      (propDef.attrTargetIsNotSource || !propData.settingPropFromAttrSource);
+    const mustReflect = propDef.attrTarget && (propDef.attrTargetIsNotSource || !propData.settingPropFromAttrSource);
     if (mustReflect) {
       // Note: setting the prop to empty implies the default value
       // and therefore no attribute should be present!
@@ -1810,7 +1794,8 @@ function createNativePropertyDescriptor (propDef) {
 if (!Object.is) {
   Object.is = function (x, y) {
     // SameValue algorithm
-    if (x === y) { // Steps 1-5, 7-10
+    if (x === y) {
+      // Steps 1-5, 7-10
       // Steps 6.b-6.e: +0 != -0
       return x !== 0 || 1 / x === 1 / y;
     } else {
@@ -1826,14 +1811,12 @@ const _prevName = createSymbol('prevName');
 const _prevOldValue = createSymbol('prevOldValue');
 const _prevNewValue = createSymbol('prevNewValue');
 
-function preventDoubleCalling (elem, name$$1, oldValue, newValue) {
-  return name$$1 === elem[_prevName] &&
-    oldValue === elem[_prevOldValue] &&
-    newValue === elem[_prevNewValue];
+function preventDoubleCalling(elem, name$$1, oldValue, newValue) {
+  return name$$1 === elem[_prevName] && oldValue === elem[_prevOldValue] && newValue === elem[_prevNewValue];
 }
 
 // TODO remove when not catering to Safari < 10.
-function createNativePropertyDescriptors (Ctor) {
+function createNativePropertyDescriptors(Ctor) {
   const propDefs = getPropsMap(Ctor);
   return getPropNamesAndSymbols(propDefs).reduce((propDescriptors, nameOrSymbol) => {
     propDescriptors[nameOrSymbol] = createNativePropertyDescriptor(propDefs[nameOrSymbol]);
@@ -1844,11 +1827,11 @@ function createNativePropertyDescriptors (Ctor) {
 // TODO refactor when not catering to Safari < 10.
 //
 // We should be able to simplify this where all we do is Object.defineProperty().
-function createInitProps (Ctor) {
+function createInitProps(Ctor) {
   const propDescriptors = createNativePropertyDescriptors(Ctor);
 
-  return (elem) => {
-    getPropNamesAndSymbols(propDescriptors).forEach((nameOrSymbol) => {
+  return elem => {
+    getPropNamesAndSymbols(propDescriptors).forEach(nameOrSymbol => {
       const propDescriptor = propDescriptors[nameOrSymbol];
       propDescriptor.beforeDefineProperty(elem);
 
@@ -1890,36 +1873,34 @@ var Component = class extends HTMLElement$1 {
    * Returns unique attribute names configured with props and
    * those set on the Component constructor if any
    */
-  static get observedAttributes () {
+  static get observedAttributes() {
     const attrsOnCtor = this.hasOwnProperty(ctorObservedAttributes) ? this[ctorObservedAttributes] : [];
     const propDefs = getPropsMap(this);
 
     // Use Object.keys to skips symbol props since they have no linked attributes
-    const attrsFromLinkedProps = Object.keys(propDefs).map(propName =>
-      propDefs[propName].attrSource).filter(Boolean);
+    const attrsFromLinkedProps = Object.keys(propDefs).map(propName => propDefs[propName].attrSource).filter(Boolean);
 
     const all = attrsFromLinkedProps.concat(attrsOnCtor).concat(super.observedAttributes);
-    return all.filter((item, index$$1) =>
-      all.indexOf(item) === index$$1);
+    return all.filter((item, index$$1) => all.indexOf(item) === index$$1);
   }
 
-  static set observedAttributes (value) {
+  static set observedAttributes(value) {
     value = Array.isArray(value) ? value : [];
     setCtorNativeProperty(this, 'observedAttributes', value);
   }
 
   // Returns superclass props overwritten with this Component props
-  static get props () {
+  static get props() {
     return assign({}, super.props, this[ctorProps]);
   }
 
-  static set props (value) {
+  static set props(value) {
     setCtorNativeProperty(this, ctorProps, value);
   }
 
   // Passing args is designed to work with document-register-element. It's not
   // necessary for the webcomponents/custom-element polyfill.
-  constructor (...args) {
+  constructor(...args) {
     super(...args);
 
     const { constructor } = this;
@@ -1977,7 +1958,7 @@ var Component = class extends HTMLElement$1 {
   }
 
   // Custom Elements v1
-  connectedCallback () {
+  connectedCallback() {
     // Reflect attributes pending values
     getAttrMgr(this).resumeAttributesUpdates();
 
@@ -2003,7 +1984,7 @@ var Component = class extends HTMLElement$1 {
   }
 
   // Custom Elements v1
-  disconnectedCallback () {
+  disconnectedCallback() {
     // Suspend updating attributes until re-connected
     getAttrMgr(this).suspendAttributesUpdates();
 
@@ -2021,7 +2002,7 @@ var Component = class extends HTMLElement$1 {
   }
 
   // Custom Elements v1
-  attributeChangedCallback (name$$1, oldValue, newValue) {
+  attributeChangedCallback(name$$1, oldValue, newValue) {
     // Polyfill calls this twice.
     if (preventDoubleCalling(this, name$$1, oldValue, newValue)) {
       return;
@@ -2038,9 +2019,7 @@ var Component = class extends HTMLElement$1 {
       if (changedExternally) {
         // Sync up the property.
         const propDef = getPropsMap(this.constructor)[propNameOrSymbol];
-        const newPropVal = newValue !== null && propDef.deserialize
-          ? propDef.deserialize(newValue)
-          : newValue;
+        const newPropVal = newValue !== null && propDef.deserialize ? propDef.deserialize(newValue) : newValue;
 
         const propData = data(this, 'props')[propNameOrSymbol];
         propData.settingPropFromAttrSource = true;
@@ -2060,7 +2039,7 @@ var Component = class extends HTMLElement$1 {
   }
 
   // Skate
-  updatedCallback (prevProps) {
+  updatedCallback(prevProps) {
     if (this.constructor.hasOwnProperty('updated')) {
       DEBUG && deprecated(this, 'static updated', 'updatedCallback');
     }
@@ -2068,7 +2047,7 @@ var Component = class extends HTMLElement$1 {
   }
 
   // Skate
-  renderedCallback () {
+  renderedCallback() {
     if (this.constructor.hasOwnProperty('rendered')) {
       DEBUG && deprecated(this, 'static rendered', 'renderedCallback');
     }
@@ -2080,7 +2059,7 @@ var Component = class extends HTMLElement$1 {
   // Maps to the static renderer() callback. That logic should be moved here
   // when that is finally removed.
   // TODO: finalize how to support different rendering strategies.
-  rendererCallback () {
+  rendererCallback() {
     // TODO: cannot move code here because tests expects renderer function to still exist on constructor!
     return this.constructor.renderer(this);
   }
@@ -2088,7 +2067,7 @@ var Component = class extends HTMLElement$1 {
   // Skate
   // @internal
   // Invokes the complete render lifecycle.
-  [renderer] () {
+  [renderer]() {
     if (this[rendering] || !this[connected]) {
       return;
     }
@@ -2107,14 +2086,14 @@ var Component = class extends HTMLElement$1 {
   // Skate
   // @internal
   // Calls the updatedCallback() with previous props.
-  [updated] () {
+  [updated]() {
     const prevProps = this[props];
     this[props] = props$1(this);
     return this.updatedCallback(prevProps);
   }
 
   // Skate
-  static extend (definition = {}, Base = this) {
+  static extend(definition = {}, Base = this) {
     // Create class for the user.
     class Ctor extends Base {}
 
@@ -2137,14 +2116,14 @@ var Component = class extends HTMLElement$1 {
   // DEPRECATED
   //
   // Stubbed in case any subclasses are calling it.
-  static rendered () {}
+  static rendered() {}
 
   // Skate
   //
   // DEPRECATED
   //
   // Move this to rendererCallback() before removing.
-  static renderer (elem) {
+  static renderer(elem) {
     if (!elem.shadowRoot) {
       elem.attachShadow({ mode: 'open' });
     }
@@ -2153,7 +2132,7 @@ var Component = class extends HTMLElement$1 {
       if (isFunction(possibleFn)) {
         possibleFn();
       } else if (Array.isArray(possibleFn)) {
-        possibleFn.forEach((fn) => {
+        possibleFn.forEach(fn => {
           if (isFunction(fn)) {
             fn();
           }
@@ -2167,7 +2146,7 @@ var Component = class extends HTMLElement$1 {
   // DEPRECATED
   //
   // Move this to updatedCallback() before removing.
-  static updated (elem, previousProps) {
+  static updated(elem, previousProps) {
     // The 'previousProps' will be undefined if it is the initial render.
     if (!previousProps) {
       return true;
@@ -2192,7 +2171,7 @@ var Component = class extends HTMLElement$1 {
   }
 };
 
-const Event = ((TheEvent) => {
+const Event = (TheEvent => {
   if (TheEvent) {
     try {
       new TheEvent('emit-init'); // eslint-disable-line no-new
@@ -2205,14 +2184,14 @@ const Event = ((TheEvent) => {
 
 const h = builder();
 
-var define$1 = (componentName, classDefinition) => {
+var define$1 = ((componentName, classDefinition) => {
   if (customElements.get(componentName)) {
-    console.warn(`${componentName} it's already defined, skiping redefinition`);
+    console.warn(`${ componentName } it's already defined, skiping redefinition`);
     return;
   }
 
   customElements.define(componentName, classDefinition);
-};
+});
 
 var styles$1 = `
 /*
@@ -2345,54 +2324,41 @@ Bounce
 }
 `;
 
-var layout = (type, extraClass = '') => {
+var layout = ((type, extraClass = '') => {
   const layouts = {
-    circle: [
-      h('div', {
-          class: `spinner circle ${extraClass}`
-        },
-        h('div', {
-          class: `bounce1`
-        }),
-        h('div', {
-          class: 'bounce2'
-        })
-      )
-    ],
-    rect: [
-      h('div', {
-        class: `spinner rect ${extraClass}`
-      }, h('div', {
-        class: 'rect1'
-      }), h('div', {
-        class: 'rect2'
-      }), h('div', {
-        class: 'rect3'
-      }), h('div', {
-        class: 'rect4'
-      }), h('div', {
-        class: 'rect5'
-      }))
-    ],
-    bounce: [
-      h('div', {
-          class: `spinner bounce ${extraClass}`
-        },
-        h('div', {
-          class: `bounce1`
-        }),
-        h('div', {
-          class: 'bounce2'
-        }),
-        h('div', {
-          class: 'bounce3'
-        })
-      )
-    ]
+    circle: [h('div', {
+      class: `spinner circle ${ extraClass }`
+    }, h('div', {
+      class: `bounce1`
+    }), h('div', {
+      class: 'bounce2'
+    }))],
+    rect: [h('div', {
+      class: `spinner rect ${ extraClass }`
+    }, h('div', {
+      class: 'rect1'
+    }), h('div', {
+      class: 'rect2'
+    }), h('div', {
+      class: 'rect3'
+    }), h('div', {
+      class: 'rect4'
+    }), h('div', {
+      class: 'rect5'
+    }))],
+    bounce: [h('div', {
+      class: `spinner bounce ${ extraClass }`
+    }, h('div', {
+      class: `bounce1`
+    }), h('div', {
+      class: 'bounce2'
+    }), h('div', {
+      class: 'bounce3'
+    }))]
   };
 
   return layouts[type];
-};
+});
 
 class SKSpinner extends Component {
   static get props() {
@@ -2418,14 +2384,12 @@ class SKSpinner extends Component {
   }
 
   renderCallback() {
-    const mergedStyles = styles$1 + `:host {--color: ${this.color};}`;
+    const mergedStyles = styles$1 + `:host {--color: ${ this.color };}`;
     const overlay = this.overlay ? 'overlay' : '';
 
     return [
-      //TODO: pass proper .spinner width and height based on 'size' attribute
-      h('style', mergedStyles),
-      ...layout(this.type, overlay)
-    ];
+    //TODO: pass proper .spinner width and height based on 'size' attribute
+    h('style', mergedStyles), ...layout(this.type, overlay)];
   }
 }
 
