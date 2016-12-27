@@ -2145,6 +2145,26 @@ const Event = (TheEvent => {
 
 const h = builder();
 
+var styles = `
+.zoom{
+  position: relative;
+  width: 500px;
+  overflow: hidden;
+  cursor: zoom-in;
+  background-size: var(--zoom-level);
+  border: 1px solid;
+}
+.zoom img{
+  transition: opacity .5s;
+  display: block;
+  width: 100%;
+  background-color: white;
+}   
+.zoom img:hover{
+  opacity: 0;
+}
+`;
+
 var define$1 = ((componentName, classDefinition) => {
   if (customElements.get(componentName)) {
     console.warn(`${ componentName } it's already defined, skiping redefinition`);
@@ -2159,25 +2179,40 @@ class SKzoomable extends Component {
     return {
       src: {
         attribute: true
+      },
+      zoomLevel: {
+        attribute: true,
+        default: 1.2
       }
     };
   }
 
   renderCallback() {
+    const level = Math.round(this.zoomLevel * 100);
+    const mergedStyles = styles + `:host{--zoom-level: ${ level }%;}`;
 
     return h(
-      'figure',
-      { 'class': 'zoom', style: { background: this.src }, onmousemove: this.zoom },
-      h('img', { src: this.src })
+      'div',
+      null,
+      h(
+        'style',
+        null,
+        mergedStyles
+      ),
+      h(
+        'figure',
+        { 'class': 'zoom', style: { 'background-image': `url(${ this.src })` }, onmousemove: this.zoom },
+        h('img', { src: this.src })
+      )
     );
   }
 
   zoom(e) {
-    const zoomer = event.currentTarget;
-    const x = event.offsetX / zoomer.offsetWidth * 100;
-    const y = event.offsetY / zoomer.offsetHeight * 100;
+    const zoomer = e.currentTarget;
+    const x = e.offsetX / zoomer.offsetWidth * 100;
+    const y = e.offsetY / zoomer.offsetHeight * 100;
 
-    zoomer.style.backgroundPosition = x + '% ' + y + '%';
+    zoomer.style.backgroundPosition = `${ x }% ${ y }%`;
   }
 }
 

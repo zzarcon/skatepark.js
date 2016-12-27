@@ -10,23 +10,32 @@ class SKzoomable extends Component {
     return {
       src: {
         attribute: true
-      }      
+      },
+      zoomLevel: {
+        attribute: true,
+        default: 1.2
+      }
     };
   }
 
   renderCallback() {
+    const level = Math.round(this.zoomLevel * 100);
+    const mergedStyles = styles + `:host{--zoom-level: ${level}%;}`;
 
-    return <figure class='zoom' style={{background: this.src}} onmousemove={this.zoom}>      
-      <img src={this.src} />
-    </figure>
+    return <div>
+      <style>{mergedStyles}</style>
+      <figure class='zoom' style={{'background-image': `url(${this.src})`}} onmousemove={this.zoom}>      
+        <img src={this.src} />
+      </figure>
+    </div>
   }
 
   zoom(e) {
-    const zoomer = event.currentTarget;
-    const x = event.offsetX / zoomer.offsetWidth * 100;
-    const y = event.offsetY / zoomer.offsetHeight * 100;
+    const zoomer = e.currentTarget;
+    const x = e.offsetX / zoomer.offsetWidth * 100;
+    const y = e.offsetY / zoomer.offsetHeight * 100;
 
-    zoomer.style.backgroundPosition = x + '% ' + y + '%';
+    zoomer.style.backgroundPosition = `${x}% ${y}%`;
   }
 }
 

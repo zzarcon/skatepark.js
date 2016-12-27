@@ -1,16 +1,19 @@
 export default `
-figure.zoom{
+.zoom{
   position: relative;
   width: 500px;
   overflow: hidden;
   cursor: zoom-in;
+  background-size: var(--zoom-level);
+  border: 1px solid;
 }
-figure.zoom img{
+.zoom img{
   transition: opacity .5s;
   display: block;
   width: 100%;
+  background-color: white;
 }   
-figure.zoom img:hover{
+.zoom img:hover{
   opacity: 0;
 }
 `;
