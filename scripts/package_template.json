@@ -1,0 +1,23 @@
+{
+  "name": "skateparkjs-pkg_name",
+  "version": "0.1.0",
+  "description": "",
+  "main": "dist/index.js",
+  "jsnext:main": "src/index.js",
+  "scripts": {
+    "watch": "sk-watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zzarcon/skatepark.js/tree/master/packages/pkg_name"
+  },
+  "author": "zzarcon",
+  "license": "MIT",
+  "dependencies": {
+    "skatejs": "^4.4.0",
+    "skateparkjs-core": "0.1.0"
+  },
+  "devDependencies": {
+    "skateparkjs-build": "0.1.0"
+  }
+}
