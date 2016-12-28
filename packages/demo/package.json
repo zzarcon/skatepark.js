@@ -21,6 +21,8 @@
     "skateparkjs-growy": "0.1.0",
     "skateparkjs-progress": "0.1.0",
     "skateparkjs-spinner": "0.1.0",
-    "skateparkjs-tags": "0.1.0"
+    "skateparkjs-tags": "0.1.0",
+    "skateparkjs-zoomable": "0.1.0",
+    "skateparkjs-sticky-list": "0.1.0"
   }
 }

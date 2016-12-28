@@ -1,0 +1,20 @@
+{
+  "name": "skateparkjs-sticky-list",
+  "version": "0.1.0",
+  "description": "",
+  "main": "dist/index.js",
+  "jsnext:main": "src/index.jsx",
+  "scripts": {
+    "watch": "sk-watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zzarcon/skatepark.js/tree/master/packages/sticky-list"
+  },
+  "author": "zzarcon",
+  "license": "MIT",
+  "dependencies": {
+    "skatejs": "^4.4.0",
+    "skateparkjs-core": "0.1.0"
+  }
+}

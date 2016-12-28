@@ -4,3 +4,4 @@ import progress from './progress';
 import emoji from './emoji';
 import growy from './growy';
 import zoomable from './zoomable'
+import stickyList from './sticky-list'
