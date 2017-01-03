@@ -44,5 +44,5 @@ const onClick = () => {
     </div>
   }, Object.assign({}, options, {source: false}))
   .addWithInfo('Set initial tags', () => (
-    <sk-tags tags="1,2,3"></sk-tags>
+    <sk-tags tags="[1,2,3]"></sk-tags>
   ), options);

@@ -1,6 +1,7 @@
 import {
   Component,
-  h
+  h,
+  prop
 } from 'skatejs';
 import styles from './styles';
 import {define} from 'skateparkjs-core';
@@ -8,29 +9,18 @@ import {define} from 'skateparkjs-core';
 const deleteCode = 8;
 
 class SKTags extends Component {
-  static get props() {
-    return {
-      delimiter: {
-        attribute: true,
-        default: ' '
-      },
-      tags: {
-        attribute: true,
-        default: [],
-        deserialize (value) {
-          return value.split(',');
-        }
-      },
-      deletion: {
-        attribute: true,
-        default: false
-      },
-      //TODO: Implement editable tags
-      editable: {
-        attribute: true,
-        default: true
-      }
-    };
+  static props = {
+    delimiter: prop.string({attribute: true, default: ' '}),
+    tags: prop.array({attribute: true}),
+    deletion: {
+      attribute: true,
+      default: false
+    },
+    //TODO: Implement editable tags
+    editable: {
+      attribute: true,
+      default: true
+    }
   }
 
   renderCallback() {
@@ -39,71 +29,61 @@ class SKTags extends Component {
     const tagElements = tags.map(t => {
       const tagContent = allowDeletion ? <span class='deletion'>{t}</span> : t;
 
-      return <span class="tag" onclick={this.onTagClick(this)} >{tagContent}</span>;
+      return <span class="tag" onclick={this.onTagClick} >{tagContent}</span>;
     });
 
     return <div>
       <style>{styles}</style>
-      <div class='wrapper' onclick={this.onWrapperClick(this)}>
+      <div class='wrapper' onclick={this.onWrapperClick}>
         <span class='tags'>{tagElements}</span>
-        <input type="text" oninput={this.onInput(this)} onkeydown={this.onKeydown(this)} autofocus="true" class= 'input'/>
+        <input type="text" oninput={this.onInput} onkeydown={this.onKeydown} autofocus="true" class= 'input'/>
       </div>
     </div>
   }
 
-  onTagClick(component) {
-    return function(e) {
-      if (e.target.classList.contains('deletion')) {
-        const childs = Array.from(this.parentElement.children);
-        const index = childs.indexOf(this);
+  onTagClick = e => {
+    if (e.target.classList.contains('deletion')) {
+      const childs = Array.from(e.currentTarget.parentElement.children);
+      const index = childs.indexOf(e.currentTarget);
 
-        component.removeTag(index);
-        component.focusInput();
-      }
-    };
+      this.removeTag(index);
+      this.focusInput();
+    }
   }
 
-  onWrapperClick(component) {
-    return function(e) {
-      if (e.target !== this) return;
-
-      component.focusInput();
-    };
+  onWrapperClick = e => {
+    this.focusInput();
   }
 
   focusInput() {
     this.shadowRoot.querySelector('.input').focus();
   }
 
-  onKeydown(component) {
-    return function(e) {
-      const value = this.value;
-      const isDel = e.keyCode === deleteCode;
+  onKeydown = e => {
+    const value = e.target.value;
+    const isDel = e.keyCode === deleteCode;
 
-      if (isDel && value.length <= 0) {
-        component.removeTag();
-      }
+    if (isDel && value.length <= 0) {
+      this.removeTag();
     }
   }
 
-  onInput(component) {
-    return function(e) {
-      const lastChar = this.value.substr(-1);
-      const value = this.value.slice(0, -1).trim();
-      const isDelimiter = lastChar === component.delimiter;
+  onInput = e => {
+    const lastChar = e.target.value.substr(-1);
+    const value = e.target.value.slice(0, -1).trim();
+    const isDelimiter = lastChar === this.delimiter;
 
-      if (value && isDelimiter) {
-        component.addTag(value);
-        this.value = '';
-      }
+    if (value && isDelimiter) {
+      this.addTag(value);
+      e.target.value = '';
+    }
 
-      component.adjustInputSize(this.value.length);
-    };
+    this.adjustInputSize(e.target.value.length);
   }
 
   adjustInputSize(textLength) {
     const input = this.shadowRoot.querySelector('.input');
-    const width = (textLength * 9) + 5;
+    const width = (textLength * 10) + 6;
 
     input.style.width = `${width}px`;
   }

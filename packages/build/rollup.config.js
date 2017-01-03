@@ -9,6 +9,7 @@ module.exports = {
   plugins: [
     babel({
       plugins: [
+        'transform-class-properties',
         ['transform-react-jsx', {
           pragma: 'h'
         }]
