@@ -8,46 +8,38 @@ import {define} from 'skateparkjs-core';
 class SKStickyList extends Component {
   static get props() {
     return {
-      
+      data: {
+        attribute: true,
+        default: '[]',
+        coerce(val) {
+          return JSON.parse(val);
+        }
+      }
     };
   }
 
   renderCallback() {
+    const items = this.data.map(item => {
+      const content = item.items.map(i => <li>{i}</li>);
+
+      return <li class="item">
+        <header>{item.name}</header>
+        <ul className="item-content">{content}</ul>
+      </li>
+    });
+
     return <div>
-    <style>{styles}</style>
-    <ul class="">
-      <li class="item">
-        <header>ONE</header>
-        <ul className="item-content">
-          <li>A</li>
-          <li>B</li>
-          <li>C</li>
-          <li>D</li>
-          <li>E</li>
-        </ul>
-      </li>
-      <li class="item">
-        <header>TWO</header>
-        <ul className="item-content">
-          <li>A</li>
-          <li>B</li>
-          <li>C</li>
-          <li>D</li>
-          <li>E</li>
-        </ul>
-      </li>
-      <li class="item">
-        <header>THREE</header>
-        <ul className="item-content">
-          <li>A</li>
-          <li>B</li>
-          <li>C</li>
-          <li>D</li>
-          <li>E</li>
-        </ul>
-      </li>
-    </ul>
+      <style>{styles}</style>
+      <ul class="">{items}</ul>
     </div>
+  }
+
+  renderedCallback() {
+    this.shadowRoot.querySelector('.items').addEventListener('scroll', this.onScroll);
+  }
+
+  onScroll() {
+    console.log('scroll');
   }
 }
 

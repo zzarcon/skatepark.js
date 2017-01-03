@@ -79,7 +79,7 @@ class SKEmoji extends Component {
           textarea: {
             height: '30px',
             'font-size': '16px',
-            'padding': '10px'  
+            padding: '10px'  
           }
         })
       }),
