@@ -13,6 +13,9 @@
   },
   "author": "zzarcon",
   "license": "MIT",
+  "keywords": [
+    "web-components"
+  ],
   "dependencies": {
     "skatejs": "^4.4.0",
     "skatejs-web-components": "^5.0.1",

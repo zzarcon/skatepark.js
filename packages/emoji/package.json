@@ -13,6 +13,9 @@
   },
   "author": "zzarcon",
   "license": "MIT",
+  "keywords": [
+    "web-components"
+  ],
   "dependencies": {
     "skatejs": "^4.4.0",
     "skateparkjs-growy": "0.1.0",
