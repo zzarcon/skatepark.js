@@ -8,7 +8,7 @@
     "watch": "sk-watch",
     "test:watch": "watchify -t [ rollupify --config test/rollup.config.js ] test/index.jsx -o test/test_bundle.js -v",
     "test:build": "browserify -t [ rollupify --config test/rollup.config.js ] test/index.jsx",
-    "test": "browserify -t [ rollupify --config test/rollup.config.js ] test/index.jsx | browser-run"
+    "test": "browserify -t [ rollupify --config test/rollup.config.js ] test/index.jsx | browser-run | tap-spec"
   },
   "repository": {
     "type": "git",
