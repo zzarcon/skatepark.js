@@ -24,6 +24,17 @@ var empty = function (val) {
 
 const toNullOrString = val => empty(val) ? null : String(val);
 
+function create(def) {
+  return (...args) => {
+    args.unshift({}, def);
+    return assign(...args);
+  };
+}
+
+
+
+
+
 // defaults empty to 0 and allows NaN
 
 const connected = '____skate_connected';
@@ -2225,11 +2236,17 @@ class SKStickyList extends Component {
         coerce(val) {
           return JSON.parse(val);
         }
-      }
+      },
+      func: create({
+        coerce(val) {
+          debugger;
+        }
+      })
     };
   }
 
   renderCallback() {
+    debugger;
     const items = this.data.map(item => {
       const content = item.items.map(i => h(
         'li',
@@ -2270,7 +2287,7 @@ class SKStickyList extends Component {
   }
 
   renderedCallback() {
-    this.shadowRoot.querySelector('.items').addEventListener('scroll', this.onScroll);
+    // this.shadowRoot.querySelector('.items').addEventListener('scroll', this.onScroll);
   }
 
   onScroll() {

@@ -1,0 +1,13 @@
+#!/bin/bash
+package_path=$(pwd)
+bin=node_modules/.bin
+echo "sk-test running from: $package_path"
+
+chmod -R 777 $package_path/test/index.jsx
+cd node_modules/skateparkjs-build
+
+$bin/browserify -t [ rollupify --config rollup.test.config.js ] \
+  $package_path/test/index.jsx \
+  -o $package_path/test/test_bundle.js
+
+cat $package_path/test/test_bundle.js | $bin/browser-run | $bin/tap-spec

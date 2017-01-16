@@ -1,6 +1,7 @@
 import {
   Component,
-  h
+  h,
+  prop
 } from 'skatejs';
 import styles from './styles';
 import {define} from 'skateparkjs-core';
@@ -14,11 +15,17 @@ class SKStickyList extends Component {
         coerce(val) {
           return JSON.parse(val);
         }
-      }
+      },
+      func: prop.create({
+        coerce(val) {
+          debugger
+        }
+      })
     };
   }
 
   renderCallback() {
+    debugger
     const items = this.data.map(item => {
       const content = item.items.map(i => <li>{i}</li>);
 
@@ -35,7 +42,7 @@ class SKStickyList extends Component {
   }
 
   renderedCallback() {
-    this.shadowRoot.querySelector('.items').addEventListener('scroll', this.onScroll);
+    // this.shadowRoot.querySelector('.items').addEventListener('scroll', this.onScroll);
   }
 
   onScroll() {

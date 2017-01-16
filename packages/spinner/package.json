@@ -5,7 +5,9 @@
   "main": "dist/index.js",
   "jsnext:main": "src/index.jsx",
   "scripts": {
-    "watch": "sk-watch"
+    "watch": "sk-watch",
+    "test": "sk-test",
+    "test:watch": "watchify -t [ rollupify --config test/rollup.config.js ] test/index.jsx -o test/test_bundle.js -v"
   },
   "repository": {
     "type": "git",
@@ -18,6 +20,7 @@
   ],
   "dependencies": {
     "skatejs": "^4.4.0",
+    "skatejs-web-components": "^5.0.1",
     "skateparkjs-core": "0.1.0"
   },
   "devDependencies": {
