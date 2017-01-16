@@ -3,7 +3,7 @@ const commonjs = require('rollup-plugin-commonjs');
 const babel = require('rollup-plugin-babel');
 
 module.exports = {
-  entry: 'index.jsx',
+  entry: 'test/index.jsx',
   format: 'umd',
   moduleName: 'SpinnerTests',
   plugins: [
@@ -21,5 +21,5 @@ module.exports = {
     }),
     commonjs()
   ],
-  dest: 'test_bundle.js'
+  dest: 'test/test_bundle.js'
 };

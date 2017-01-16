@@ -15,6 +15,6 @@ test('Spinner # default options', (t) => {
 });
 
 test.onFinish(() => {
-  console.log('close window')
-  // window.close();
+  console.log('<--onFinish-->');
+  window.close();
 });

@@ -19,9 +19,15 @@
     "rollup-plugin-commonjs": "^6.0.0",
     "rollup-plugin-node-resolve": "^2.0.0",
     "rollupify": "^0.3.6",
-    "watchify": "^3.8.0"
+    "watchify": "^3.8.0",
+    "bore": "^1.1.1",
+    "browser-run": "^3.3.0",
+    "tap-spec": "^4.1.1",
+    "tape": "^4.6.3",
+    "tape-dom": "git://github.com/zzarcon/tape-dom#use_diff-match-patch"
   },
   "bin": {
-    "sk-watch": "bin/watch"
+    "sk-watch": "bin/watch",
+    "sk-test": "bin/test"
   }
 }

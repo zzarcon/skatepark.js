@@ -6,9 +6,8 @@
   "jsnext:main": "src/index.jsx",
   "scripts": {
     "watch": "sk-watch",
-    "test:watch": "watchify -t [ rollupify --config test/rollup.config.js ] test/index.jsx -o test/test_bundle.js -v",
-    "test:build": "browserify -t [ rollupify --config test/rollup.config.js ] test/index.jsx",
-    "test": "browserify -t [ rollupify --config test/rollup.config.js ] test/index.jsx | browser-run | tap-spec"
+    "test": "sk-test",
+    "test:watch": "watchify -t [ rollupify --config test/rollup.config.js ] test/index.jsx -o test/test_bundle.js -v"
   },
   "repository": {
     "type": "git",
@@ -25,12 +24,6 @@
     "skateparkjs-core": "0.1.0"
   },
   "devDependencies": {
-    "bore": "^1.1.1",
-    "browser-run": "^3.3.0",
-    "googlediff": "^0.1.0",
-    "skateparkjs-build": "0.1.0",
-    "tap-spec": "^4.1.1",
-    "tape": "^4.6.3",
-    "tape-dom": "git://github.com/zzarcon/tape-dom#use_diff-match-patch"
+    "skateparkjs-build": "0.1.0"
   }
 }
